@@ -13,6 +13,8 @@
 		82DCBEF323A84E7300D562B4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF123A84E7300D562B4 /* Main.storyboard */; };
 		82DCBEF523A84E7400D562B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF423A84E7400D562B4 /* Assets.xcassets */; };
 		82DCBEF823A84E7400D562B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF623A84E7400D562B4 /* LaunchScreen.storyboard */; };
+		82E4FFA523A967A400898FCC /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E4FFA423A967A400898FCC /* BluetoothManager.swift */; };
+		82E4FFA923A9837F00898FCC /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E4FFA823A9837F00898FCC /* ExternalAccessory.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,9 @@
 		82DCBEF423A84E7400D562B4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		82DCBEF723A84E7400D562B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82DCBEF923A84E7400D562B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		82E4FFA423A967A400898FCC /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
+		82E4FFA623A9837F00898FCC /* piPhone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = piPhone.entitlements; sourceTree = "<group>"; };
+		82E4FFA823A9837F00898FCC /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82E4FFA923A9837F00898FCC /* ExternalAccessory.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +48,7 @@
 			children = (
 				82DCBEEA23A84E7300D562B4 /* piPhone */,
 				82DCBEE923A84E7300D562B4 /* Products */,
+				82E4FFA723A9837F00898FCC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,15 +63,25 @@
 		82DCBEEA23A84E7300D562B4 /* piPhone */ = {
 			isa = PBXGroup;
 			children = (
+				82E4FFA623A9837F00898FCC /* piPhone.entitlements */,
 				82DCBEEB23A84E7300D562B4 /* AppDelegate.swift */,
 				82DCBEED23A84E7300D562B4 /* SceneDelegate.swift */,
 				82DCBEEF23A84E7300D562B4 /* ViewController.swift */,
+				82E4FFA423A967A400898FCC /* BluetoothManager.swift */,
 				82DCBEF123A84E7300D562B4 /* Main.storyboard */,
 				82DCBEF423A84E7400D562B4 /* Assets.xcassets */,
 				82DCBEF623A84E7400D562B4 /* LaunchScreen.storyboard */,
 				82DCBEF923A84E7400D562B4 /* Info.plist */,
 			);
 			path = piPhone;
+			sourceTree = "<group>";
+		};
+		82E4FFA723A9837F00898FCC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				82E4FFA823A9837F00898FCC /* ExternalAccessory.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,6 +157,7 @@
 			files = (
 				82DCBEF023A84E7300D562B4 /* ViewController.swift in Sources */,
 				82DCBEEC23A84E7300D562B4 /* AppDelegate.swift in Sources */,
+				82E4FFA523A967A400898FCC /* BluetoothManager.swift in Sources */,
 				82DCBEEE23A84E7300D562B4 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,6 +302,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = piPhone/piPhone.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TUNNT73NJ4;
 				INFOPLIST_FILE = piPhone/Info.plist;
@@ -303,6 +322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = piPhone/piPhone.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TUNNT73NJ4;
 				INFOPLIST_FILE = piPhone/Info.plist;
