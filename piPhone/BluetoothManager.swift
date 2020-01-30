@@ -10,10 +10,11 @@ import Foundation
 import CoreBluetooth
 
 protocol PiPhoneDelegate {
+    var peripheral: Peripheral? { get set }
     func didConnect()
     func didDisconnect()
     func didFailToConnect()
-    func didExecuteCommand(response: String)
+    func didExecuteCommand(response: Data)
 }
 
 class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -74,6 +75,11 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         if name == peripheralName {
             pi = peripheral
             pi?.delegate = self
+            
+            if var delegate = piPhoneDelegate {
+                delegate.peripheral = Peripheral()
+                delegate.peripheral?.cbPeripheral = peripheral
+            }
             
             scanTimer?.invalidate()
             pauseTimer?.invalidate()
@@ -142,8 +148,7 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             pi?.setNotifyValue(true, for: characteristic)
             
             if characteristic.uuid == characteristicUUID {
-                let initialString:Data? = "echo \"$(whoami)@$(hostname):/../ $\"".data(using: String.Encoding.utf8)
-                pi?.writeValue(initialString!, for: characteristic, type: CBCharacteristicWriteType.withResponse)
+                piPhoneDelegate?.peripheral?.characteristic = characteristic
             }
         }
     }
@@ -161,8 +166,7 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         }
         
         if let value = characteristic.value {
-            let readableValue:String = String(data: value, encoding: String.Encoding.utf8)!
-            print("Pi output: \(readableValue)")
+            piPhoneDelegate?.didExecuteCommand(response: value)
         }
     }
 }
