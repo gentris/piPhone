@@ -3,7 +3,8 @@
 // This file contains parts of from an original project called Blink.
 // If you want to know more about Blink, see <http://www.github.com/blinksh/blink>.
 //
-// Modified by Gentris Leci on 12/17/19.
+// Modified by Gentris Leci on 1/30/20.
+//
 // Copyright © 2019 Gentris Leci.
 //
 // This file is part of piPhone
@@ -22,14 +23,13 @@
 // along with piPhone.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-#import <WebKit/WebKit.h>
+import UIKit
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface KBWebViewBase : WKWebView
-
-@property (nonatomic) BOOL readyForInput;
-
-@end
-
-NS_ASSUME_NONNULL_END
+extension UIGestureRecognizer {
+  func dropTouches() {
+    if isEnabled {
+      isEnabled = false
+      isEnabled = true
+    }
+  }
+}

@@ -7,10 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		828214CF23E087E4002EF5AB /* TermView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214CE23E087E4002EF5AB /* TermView.swift */; };
+		828214D123E087F3002EF5AB /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214D023E087F3002EF5AB /* KeyboardView.swift */; };
+		828214D523E08842002EF5AB /* KBWebViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 828214D423E08842002EF5AB /* KBWebViewBase.m */; };
+		828214D723E08D50002EF5AB /* TermGesturesInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214D623E08D50002EF5AB /* TermGesturesInteraction.swift */; };
+		828214E823E0B133002EF5AB /* base64js.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214D923E0B131002EF5AB /* base64js.min.js */; };
+		828214E923E0B133002EF5AB /* term.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214DA23E0B132002EF5AB /* term.js */; };
+		828214EA23E0B133002EF5AB /* hterm_all.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214DB23E0B132002EF5AB /* hterm_all.min.js */; };
+		828214EB23E0B133002EF5AB /* webfontloader.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214DC23E0B132002EF5AB /* webfontloader.js */; };
+		828214EC23E0B133002EF5AB /* term.html in Resources */ = {isa = PBXBuildFile; fileRef = 828214DD23E0B132002EF5AB /* term.html */; };
+		828214ED23E0B133002EF5AB /* kb.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214DE23E0B132002EF5AB /* kb.js */; };
+		828214EE23E0B133002EF5AB /* Solarized.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214E023E0B132002EF5AB /* Solarized.js */; };
+		828214EF23E0B133002EF5AB /* Flat.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214E123E0B132002EF5AB /* Flat.js */; };
+		828214F023E0B133002EF5AB /* Monokai Light.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214E223E0B132002EF5AB /* Monokai Light.js */; };
+		828214F123E0B133002EF5AB /* WWDC 16.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214E323E0B132002EF5AB /* WWDC 16.js */; };
+		828214F223E0B133002EF5AB /* Default.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214E423E0B132002EF5AB /* Default.js */; };
+		828214F323E0B133002EF5AB /* term.css in Resources */ = {isa = PBXBuildFile; fileRef = 828214E523E0B132002EF5AB /* term.css */; };
+		828214F423E0B133002EF5AB /* hterm_all.patches.js in Resources */ = {isa = PBXBuildFile; fileRef = 828214E623E0B132002EF5AB /* hterm_all.patches.js */; };
+		828214F523E0B133002EF5AB /* kb.html in Resources */ = {isa = PBXBuildFile; fileRef = 828214E723E0B132002EF5AB /* kb.html */; };
+		8282150123E1F418002EF5AB /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8282150023E1F418002EF5AB /* Peripheral.swift */; };
+		8282150323E30572002EF5AB /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8282150223E30572002EF5AB /* Session.swift */; };
+		8282150723E30DC4002EF5AB /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8282150623E30DC4002EF5AB /* UIView.swift */; };
+		8282150923E30E01002EF5AB /* UIGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8282150823E30E01002EF5AB /* UIGestureRecognizer.swift */; };
 		82DCBEEC23A84E7300D562B4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBEEB23A84E7300D562B4 /* AppDelegate.swift */; };
 		82DCBEEE23A84E7300D562B4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBEED23A84E7300D562B4 /* SceneDelegate.swift */; };
 		82DCBEF023A84E7300D562B4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DCBEEF23A84E7300D562B4 /* ViewController.swift */; };
-		82DCBEF323A84E7300D562B4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF123A84E7300D562B4 /* Main.storyboard */; };
 		82DCBEF523A84E7400D562B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF423A84E7400D562B4 /* Assets.xcassets */; };
 		82DCBEF823A84E7400D562B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF623A84E7400D562B4 /* LaunchScreen.storyboard */; };
 		82E4FFA523A967A400898FCC /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E4FFA423A967A400898FCC /* BluetoothManager.swift */; };
@@ -18,11 +39,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		828214CE23E087E4002EF5AB /* TermView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermView.swift; sourceTree = "<group>"; };
+		828214D023E087F3002EF5AB /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
+		828214D223E08841002EF5AB /* piPhone-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "piPhone-Bridging-Header.h"; sourceTree = "<group>"; };
+		828214D323E08841002EF5AB /* KBWebViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KBWebViewBase.h; sourceTree = "<group>"; };
+		828214D423E08842002EF5AB /* KBWebViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KBWebViewBase.m; sourceTree = "<group>"; };
+		828214D623E08D50002EF5AB /* TermGesturesInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermGesturesInteraction.swift; sourceTree = "<group>"; };
+		828214D923E0B131002EF5AB /* base64js.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = base64js.min.js; sourceTree = "<group>"; };
+		828214DA23E0B132002EF5AB /* term.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = term.js; sourceTree = "<group>"; };
+		828214DB23E0B132002EF5AB /* hterm_all.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hterm_all.min.js; sourceTree = "<group>"; };
+		828214DC23E0B132002EF5AB /* webfontloader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webfontloader.js; sourceTree = "<group>"; };
+		828214DD23E0B132002EF5AB /* term.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = term.html; sourceTree = "<group>"; };
+		828214DE23E0B132002EF5AB /* kb.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = kb.js; sourceTree = "<group>"; };
+		828214E023E0B132002EF5AB /* Solarized.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Solarized.js; sourceTree = "<group>"; };
+		828214E123E0B132002EF5AB /* Flat.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Flat.js; sourceTree = "<group>"; };
+		828214E223E0B132002EF5AB /* Monokai Light.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "Monokai Light.js"; sourceTree = "<group>"; };
+		828214E323E0B132002EF5AB /* WWDC 16.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "WWDC 16.js"; sourceTree = "<group>"; };
+		828214E423E0B132002EF5AB /* Default.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Default.js; sourceTree = "<group>"; };
+		828214E523E0B132002EF5AB /* term.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = term.css; sourceTree = "<group>"; };
+		828214E623E0B132002EF5AB /* hterm_all.patches.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hterm_all.patches.js; sourceTree = "<group>"; };
+		828214E723E0B132002EF5AB /* kb.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = kb.html; sourceTree = "<group>"; };
+		8282150023E1F418002EF5AB /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
+		8282150223E30572002EF5AB /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		8282150623E30DC4002EF5AB /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
+		8282150823E30E01002EF5AB /* UIGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIGestureRecognizer.swift; sourceTree = "<group>"; };
 		82DCBEE823A84E7300D562B4 /* piPhone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = piPhone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		82DCBEEB23A84E7300D562B4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		82DCBEED23A84E7300D562B4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		82DCBEEF23A84E7300D562B4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		82DCBEF223A84E7300D562B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		82DCBEF423A84E7400D562B4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		82DCBEF723A84E7400D562B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82DCBEF923A84E7400D562B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -43,6 +87,53 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		828214D823E0B0F7002EF5AB /* Web */ = {
+			isa = PBXGroup;
+			children = (
+				828214D923E0B131002EF5AB /* base64js.min.js */,
+				828214DB23E0B132002EF5AB /* hterm_all.min.js */,
+				828214E623E0B132002EF5AB /* hterm_all.patches.js */,
+				828214E723E0B132002EF5AB /* kb.html */,
+				828214DE23E0B132002EF5AB /* kb.js */,
+				828214E523E0B132002EF5AB /* term.css */,
+				828214DD23E0B132002EF5AB /* term.html */,
+				828214DA23E0B132002EF5AB /* term.js */,
+				828214DF23E0B132002EF5AB /* Themes */,
+				828214DC23E0B132002EF5AB /* webfontloader.js */,
+			);
+			path = Web;
+			sourceTree = "<group>";
+		};
+		828214DF23E0B132002EF5AB /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				828214E023E0B132002EF5AB /* Solarized.js */,
+				828214E123E0B132002EF5AB /* Flat.js */,
+				828214E223E0B132002EF5AB /* Monokai Light.js */,
+				828214E323E0B132002EF5AB /* WWDC 16.js */,
+				828214E423E0B132002EF5AB /* Default.js */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		828214FF23E1F322002EF5AB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8282150023E1F418002EF5AB /* Peripheral.swift */,
+				8282150223E30572002EF5AB /* Session.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8282150423E30DAC002EF5AB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8282150623E30DC4002EF5AB /* UIView.swift */,
+				8282150823E30E01002EF5AB /* UIGestureRecognizer.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		82DCBEDF23A84E7300D562B4 = {
 			isa = PBXGroup;
 			children = (
@@ -63,15 +154,23 @@
 		82DCBEEA23A84E7300D562B4 /* piPhone */ = {
 			isa = PBXGroup;
 			children = (
+				828214D823E0B0F7002EF5AB /* Web */,
+				8282150423E30DAC002EF5AB /* Extensions */,
+				828214FF23E1F322002EF5AB /* Models */,
 				82E4FFA623A9837F00898FCC /* piPhone.entitlements */,
 				82DCBEEB23A84E7300D562B4 /* AppDelegate.swift */,
 				82DCBEED23A84E7300D562B4 /* SceneDelegate.swift */,
 				82DCBEEF23A84E7300D562B4 /* ViewController.swift */,
 				82E4FFA423A967A400898FCC /* BluetoothManager.swift */,
-				82DCBEF123A84E7300D562B4 /* Main.storyboard */,
+				828214D323E08841002EF5AB /* KBWebViewBase.h */,
+				828214D423E08842002EF5AB /* KBWebViewBase.m */,
 				82DCBEF423A84E7400D562B4 /* Assets.xcassets */,
 				82DCBEF623A84E7400D562B4 /* LaunchScreen.storyboard */,
 				82DCBEF923A84E7400D562B4 /* Info.plist */,
+				828214CE23E087E4002EF5AB /* TermView.swift */,
+				828214D023E087F3002EF5AB /* KeyboardView.swift */,
+				828214D623E08D50002EF5AB /* TermGesturesInteraction.swift */,
+				828214D223E08841002EF5AB /* piPhone-Bridging-Header.h */,
 			);
 			path = piPhone;
 			sourceTree = "<group>";
@@ -116,6 +215,7 @@
 				TargetAttributes = {
 					82DCBEE723A84E7300D562B4 = {
 						CreatedOnToolsVersion = 11.3;
+						LastSwiftMigration = 1130;
 					};
 				};
 			};
@@ -142,9 +242,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				828214F123E0B133002EF5AB /* WWDC 16.js in Resources */,
 				82DCBEF823A84E7400D562B4 /* LaunchScreen.storyboard in Resources */,
+				828214F523E0B133002EF5AB /* kb.html in Resources */,
 				82DCBEF523A84E7400D562B4 /* Assets.xcassets in Resources */,
-				82DCBEF323A84E7300D562B4 /* Main.storyboard in Resources */,
+				828214E923E0B133002EF5AB /* term.js in Resources */,
+				828214E823E0B133002EF5AB /* base64js.min.js in Resources */,
+				828214EC23E0B133002EF5AB /* term.html in Resources */,
+				828214EF23E0B133002EF5AB /* Flat.js in Resources */,
+				828214EE23E0B133002EF5AB /* Solarized.js in Resources */,
+				828214ED23E0B133002EF5AB /* kb.js in Resources */,
+				828214F223E0B133002EF5AB /* Default.js in Resources */,
+				828214F323E0B133002EF5AB /* term.css in Resources */,
+				828214F023E0B133002EF5AB /* Monokai Light.js in Resources */,
+				828214F423E0B133002EF5AB /* hterm_all.patches.js in Resources */,
+				828214EA23E0B133002EF5AB /* hterm_all.min.js in Resources */,
+				828214EB23E0B133002EF5AB /* webfontloader.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,8 +268,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8282150323E30572002EF5AB /* Session.swift in Sources */,
 				82DCBEF023A84E7300D562B4 /* ViewController.swift in Sources */,
+				8282150723E30DC4002EF5AB /* UIView.swift in Sources */,
+				8282150123E1F418002EF5AB /* Peripheral.swift in Sources */,
+				828214D523E08842002EF5AB /* KBWebViewBase.m in Sources */,
+				828214D723E08D50002EF5AB /* TermGesturesInteraction.swift in Sources */,
 				82DCBEEC23A84E7300D562B4 /* AppDelegate.swift in Sources */,
+				828214CF23E087E4002EF5AB /* TermView.swift in Sources */,
+				828214D123E087F3002EF5AB /* KeyboardView.swift in Sources */,
+				8282150923E30E01002EF5AB /* UIGestureRecognizer.swift in Sources */,
 				82E4FFA523A967A400898FCC /* BluetoothManager.swift in Sources */,
 				82DCBEEE23A84E7300D562B4 /* SceneDelegate.swift in Sources */,
 			);
@@ -165,14 +286,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		82DCBEF123A84E7300D562B4 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				82DCBEF223A84E7300D562B4 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		82DCBEF623A84E7400D562B4 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -302,17 +415,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = piPhone/piPhone.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TUNNT73NJ4;
 				INFOPLIST_FILE = piPhone/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gentrisleci.piPhone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "piPhone/piPhone-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -322,17 +438,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = piPhone/piPhone.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TUNNT73NJ4;
 				INFOPLIST_FILE = piPhone/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.gentrisleci.piPhone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "piPhone/piPhone-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
