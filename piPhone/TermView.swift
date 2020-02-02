@@ -24,7 +24,8 @@
 
 import WebKit
 
-class TermView: WKWebView, WKNavigationDelegate {
+class TermView: WKWebView {
+    var fontSize = 12
     var ready: Bool = false
     
     override var canResignFirstResponder: Bool { return false }
@@ -50,7 +51,7 @@ class TermView: WKWebView, WKNavigationDelegate {
         let script = NSMutableArray()
         script.add("function applyUserSettings() {")
         script.add("term_set('cursor-blink', true);")
-        script.add("term_setFontSize(12);")
+        script.add("term_setFontSize(\(self.fontSize));")
         script.add("};")
         script.add("term_init();")
         script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")
@@ -77,8 +78,7 @@ class TermView: WKWebView, WKNavigationDelegate {
         self.evaluateJavaScript(output, completionHandler: nil)
     }
     
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        ready = true
-        
+    func setFontSize(_ size: Int) {
+        self.evaluateJavaScript("term_setFontSize('\(size)');", completionHandler: nil)
     }
 }

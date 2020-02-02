@@ -94,7 +94,27 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
     }
     
     @objc public func scaleWithPinch(_ pinch: UIPinchGestureRecognizer) {
-        print("ScaleWithPinch...")
+        var fontSize: Int = termView.fontSize
+        
+        switch pinch.state {
+        case .began: fallthrough
+        case .changed:
+            fontSize = Int(round(CGFloat(termView.fontSize)) * pinch.scale)
+            
+            if fontSize == 0 {
+                fontSize = 1
+            }
+            
+            guard fontSize != termView.fontSize else {
+                return
+            }
+            
+            termView.setFontSize(fontSize)
+        case .ended:
+            termView.fontSize = fontSize
+        default:
+            break
+        }
     }
     
     func terminalReady() {
