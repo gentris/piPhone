@@ -27,7 +27,7 @@ import UIKit
 import WebKit
 
 class TermGesturesInteraction: NSObject, UIInteraction {
-    private var webView: WKWebView?
+    private var termView: TermView?
     private var keyboardView: KeyboardView?
     private let scrollView = UIScrollViewWithoutHitTest()
     private let oneTapRecognizer = UITapGestureRecognizer()
@@ -61,31 +61,31 @@ class TermGesturesInteraction: NSObject, UIInteraction {
     }
     
     func willMove(to view: UIView?) {
-        if let webView = view as? WKWebView {
-            webView.scrollView.delaysContentTouches = false;
-            webView.scrollView.canCancelContentTouches = false;
-            webView.scrollView.isScrollEnabled = false;
-            webView.scrollView.panGestureRecognizer.isEnabled = false;
+        if let termView = view as? TermView {
+            termView.scrollView.delaysContentTouches = false;
+            termView.scrollView.canCancelContentTouches = false;
+            termView.scrollView.isScrollEnabled = false;
+            termView.scrollView.panGestureRecognizer.isEnabled = false;
           
           
-            scrollView.frame = webView.bounds
-            webView.addSubview(scrollView)
-            webView.configuration.userContentController.add(self, name: "wkScroller")
+            scrollView.frame = termView.bounds
+            termView.addSubview(scrollView)
+            termView.configuration.userContentController.add(self, name: "wkScroller")
             
             for recognizer in recognizers {
-                webView.addGestureRecognizer(recognizer)
+                termView.addGestureRecognizer(recognizer)
             }
             
-            self.webView = webView
+            self.termView = termView
         } else {
             scrollView.removeFromSuperview()
-            webView?.configuration.userContentController.removeScriptMessageHandler(forName: "wkScroller")
+            termView?.configuration.userContentController.removeScriptMessageHandler(forName: "wkScroller")
           
             for recognizer in recognizers {
-                webView?.addGestureRecognizer(recognizer)
+                termView?.addGestureRecognizer(recognizer)
             }
           
-            webView = nil
+            termView = nil
         }
     }
     
@@ -98,9 +98,9 @@ class TermGesturesInteraction: NSObject, UIInteraction {
         
         switch recognizer.state {
             case .recognized:
-                webView?.evaluateJavaScript("term_reportMouseClick(\(point.x), \(point.y), 1, true));", completionHandler: nil)
+                termView?.evaluateJavaScript("term_reportMouseClick(\(point.x), \(point.y), 1, true));", completionHandler: nil)
                 keyboardView?.becomeFirstResponder()
-                webView?.setNeedsLayout()
+                termView?.setNeedsLayout()
                 keyboardView?.setNeedsLayout()
             default: break
         }
@@ -116,14 +116,10 @@ class TermGesturesInteraction: NSObject, UIInteraction {
 
         recognizer.view?.superview?.dropSuperViewTouches()
         scrollView.panGestureRecognizer.dropTouches()
-         
-        if let target = webView?.target(forAction: #selector(scaleWithPinch(_:)), withSender: recognizer) as? UIResponder {
-            target.perform(#selector(scaleWithPinch(_:)), with: recognizer)
-        }
+        
+        termView?.scaleWithPinch(recognizer)
       }
     }
-    
-    @objc func scaleWithPinch(_ pinch: UIPinchGestureRecognizer) {}
 }
 
 extension TermGesturesInteraction: UIGestureRecognizerDelegate {
@@ -135,7 +131,7 @@ extension TermGesturesInteraction: UIGestureRecognizerDelegate {
 extension TermGesturesInteraction: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset
-        webView?.evaluateJavaScript("\(jsScollerPath).reportScroll(\(offset.x), \(offset.y));", completionHandler: nil)
+        termView?.evaluateJavaScript("\(jsScollerPath).reportScroll(\(offset.x), \(offset.y));", completionHandler: nil)
     }
 }
 

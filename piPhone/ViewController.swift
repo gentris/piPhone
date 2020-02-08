@@ -63,25 +63,35 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         print("Message.Name: ", message.name)
-            if message.name == self.termViewScriptName {
-                let sentData: NSDictionary = message.body as! NSDictionary
-                let operation:String = sentData["op"] as! String
-
-                if operation == "terminalReady" {
-                    self.terminalReady()
-                }
-            } else if message.name == self.keyboardViewScriptName {
-                let body: NSDictionary = message.body as! NSDictionary
-                guard let op: String = body["op"] as? String else {
-                    return
-                }
+        if message.name == self.termViewScriptName {
+            let payload: NSDictionary = message.body as! NSDictionary
+            let operation:String = payload["op"] as! String
+            let data = payload["data"] as! NSDictionary
+            
+            if operation == "terminalReady" {
+                let sizeData = data["size"] as! NSDictionary
+                self.terminalReady(sizeData)
+            } else if operation == "fontSizeChanged" {
                 
-                if (op == "out") {
-                    let data: String = body["data"] as! String
-                    peripheral?.write(data: data)
-                    print("kbData: ", data)
-                }
+            } else if operation == "sigwinch" {
+                termView.cols = data["cols"] as! Int
+                termView.rows = data["rows"] as! Int
+                
+                let data = "{\"cols\": \(termView.cols), \"rows\": \(termView.rows)}"
+                peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
             }
+        } else if message.name == self.keyboardViewScriptName {
+            let body: NSDictionary = message.body as! NSDictionary
+            guard let op: String = body["op"] as? String else {
+                return
+            }
+            
+            if (op == "out") {
+                let data: String = body["data"] as! String
+                peripheral?.write(data: data, characteristic: peripheral?.commandCharacteristic);
+                print("kbData: ", data)
+            }
+        }
     }
     
     func didConnect() {}
@@ -93,35 +103,21 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
         termView.write(data)
     }
     
-    @objc public func scaleWithPinch(_ pinch: UIPinchGestureRecognizer) {
-        var fontSize: Int = termView.fontSize
-        
-        switch pinch.state {
-        case .began: fallthrough
-        case .changed:
-            fontSize = Int(round(CGFloat(termView.fontSize)) * pinch.scale)
-            
-            if fontSize == 0 {
-                fontSize = 1
-            }
-            
-            guard fontSize != termView.fontSize else {
-                return
-            }
-            
-            termView.setFontSize(fontSize)
-        case .ended:
-            termView.fontSize = fontSize
-        default:
-            break
+    func didUpdateNotificationStateFor(characteristic: CBCharacteristic) {
+        if characteristic == peripheral?.screenCharacteristic {
+            let data = "{\"cols\": \(termView.cols), \"rows\": \(termView.rows)}"
+            peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
         }
     }
     
-    func terminalReady() {
+    func terminalReady(_ data: NSDictionary) {
         UIView.transition(from: coverView, to: termView, duration: 0.3, options: .transitionCrossDissolve) { finished in
             self.coverView.removeFromSuperview()
             self.keyboardView.readyForInput = true
             self.keyboardView.becomeFirstResponder()
+            
+            self.termView.cols = data["cols"] as! Int
+            self.termView.rows = data["rows"] as! Int
             
             self.bluetoothManager = BluetoothManager()
             self.bluetoothManager.piPhoneDelegate = self

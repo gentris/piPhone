@@ -27,6 +27,7 @@ protocol PiPhoneDelegate {
     func didDisconnect()
     func didFailToConnect()
     func didExecuteCommand(response: Data)
+    func didUpdateNotificationStateFor(characteristic: CBCharacteristic)
 }
 
 class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -38,7 +39,8 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     private var pauseTimer:Timer?
     
     private let serviceUUID = CBUUID(string: "50315dc8-bd51-4561-a9ec-eac52609b17a")
-    private let characteristicUUID = CBUUID(string: "e6b8f004-b286-4826-b6ca-cba2eb628c03")
+    private let screenCharacteristicUUID = CBUUID(string: "755ae080-461f-11ea-b77f-2e728ce88125")
+    private let commandCharacteristicUUID = CBUUID(string: "e6b8f004-b286-4826-b6ca-cba2eb628c03")
     private let peripheralName = "pi"
     
     override init() {
@@ -138,7 +140,7 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         
         for service in services {
             print("Service with UUID: \(service.uuid)")
-            peripheral.discoverCharacteristics([characteristicUUID], for: service)
+            peripheral.discoverCharacteristics([screenCharacteristicUUID, commandCharacteristicUUID], for: service)
         }
     }
     
@@ -159,13 +161,16 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             print("Characteristic with UUID: \(characteristic.uuid)")
             pi?.setNotifyValue(true, for: characteristic)
             
-            if characteristic.uuid == characteristicUUID {
-                piPhoneDelegate?.peripheral?.characteristic = characteristic
+            if characteristic.uuid == screenCharacteristicUUID {
+                piPhoneDelegate?.peripheral?.screenCharacteristic = characteristic
+            } else if characteristic.uuid == commandCharacteristicUUID {
+                piPhoneDelegate?.peripheral?.commandCharacteristic = characteristic
             }
         }
     }
-    
+        
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        piPhoneDelegate?.didUpdateNotificationStateFor(characteristic: characteristic)
         if !characteristic.isNotifying {
             pi?.setNotifyValue(true, for: characteristic)
         }

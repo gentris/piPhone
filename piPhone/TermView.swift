@@ -25,8 +25,11 @@
 import WebKit
 
 class TermView: WKWebView {
-    var fontSize = 12
-    var ready: Bool = false
+    var fontSize = 25
+    var lastFontSize = 25
+    var rows = 0
+    var cols = 0
+    var ready = false
     
     override var canResignFirstResponder: Bool { return false }
     override func becomeFirstResponder() -> Bool { return false }
@@ -54,8 +57,8 @@ class TermView: WKWebView {
         script.add("term_setFontSize(\(self.fontSize));")
         script.add("};")
         script.add("term_init();")
-        script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")
-        return WKUserScript(source: script.componentsJoined(by: "\n"), injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
+    script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")
+    return WKUserScript(source: script.componentsJoined(by: "\n"), injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
     }
     
     func write(_ data: String) {
@@ -78,7 +81,32 @@ class TermView: WKWebView {
         self.evaluateJavaScript(output, completionHandler: nil)
     }
     
-    func setFontSize(_ size: Int) {
+    func updateFontSize(_ size: Int) {
+        self.lastFontSize = size
         self.evaluateJavaScript("term_setFontSize('\(size)');", completionHandler: nil)
+    }
+    
+    public func scaleWithPinch(_ pinch: UIPinchGestureRecognizer) {
+        var fontSize: Int = self.fontSize
+        
+        switch pinch.state {
+        case .began: fallthrough
+        case .changed:
+            fontSize = Int(round(CGFloat(self.fontSize)) * pinch.scale)
+            
+            if fontSize == 0 {
+                fontSize = 1
+            }
+            
+            guard fontSize != self.fontSize else {
+                return
+            }
+            
+            self.updateFontSize(fontSize)
+        case .ended:
+            self.fontSize = self.lastFontSize
+        default:
+            break
+        }
     }
 }
