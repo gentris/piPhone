@@ -25,8 +25,8 @@
 import WebKit
 
 class TermView: WKWebView {
-    var fontSize = 25
-    var lastFontSize = 25
+    var fontSize = 14
+    var lastFontSize = 14
     var rows = 0
     var cols = 0
     var ready = false
@@ -55,6 +55,7 @@ class TermView: WKWebView {
         script.add("function applyUserSettings() {")
         script.add("term_set('cursor-blink', true);")
         script.add("term_setFontSize(\(self.fontSize));")
+        script.add("term_set('background-color', '#000');");
         script.add("};")
         script.add("term_init();")
     script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")

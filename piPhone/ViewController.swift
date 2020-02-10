@@ -27,6 +27,8 @@ import CoreBluetooth
 
 class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate {
     var peripheral: Peripheral?
+    private var keyboardIsShown = false
+    private var keyboardRect: CGRect?
     private var termView: TermView!
     private var keyboardView: KeyboardView!
     private var coverView: UIView!
@@ -36,6 +38,32 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addKeyboardObservers()
+    }
+    
+    func addKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+        
+    @objc func keyboardWillShow(notification: NSNotification) {
+        self.keyboardIsShown = true
+        if let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            self.keyboardRect = keyboardRect
+            self.termView.frame = self.termViewFrame()
+            self.view.setNeedsLayout()
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        self.keyboardIsShown = false
+        self.keyboardRect = nil
+        self.termView.frame = self.termViewFrame()
+        self.view.setNeedsLayout()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         self.loadSubViews()
     }
     
@@ -45,7 +73,7 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
         configuration.userContentController.add(self, name: termViewScriptName)
         configuration.userContentController.add(self, name: keyboardViewScriptName)
         
-        termView = TermView(frame: UIScreen.main.bounds, configuration: configuration)
+        termView = TermView(frame: termViewFrame(), configuration: configuration)
         keyboardView = KeyboardView(frame: .zero, configuration: configuration)
         coverView = UIView(frame: UIScreen.main.bounds)
         
@@ -122,5 +150,15 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
             self.bluetoothManager = BluetoothManager()
             self.bluetoothManager.piPhoneDelegate = self
         }
+    }
+    
+    func termViewFrame() -> CGRect {
+        var inset = view.window?.safeAreaInsets ?? .zero
+        
+        if let height = self.keyboardRect?.height {
+            inset.bottom = max(inset.bottom, height)
+        }
+        
+        return UIScreen.main.bounds.inset(by: inset)
     }
 }
