@@ -23,6 +23,7 @@ import CoreBluetooth
 
 protocol PiPhoneDelegate {
     var peripheral: Peripheral? { get set }
+    func didUpdateBluetoothState(state: CBManagerState)
     func didConnect()
     func didDisconnect()
     func didFailToConnect()
@@ -71,6 +72,8 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        piPhoneDelegate?.didUpdateBluetoothState(state: central.state)
+        
         if central.state != CBManagerState.poweredOn {
             print("Bluetooth is not ready for communication.")
             return
@@ -78,6 +81,7 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         
         print("Bluetooth is ON and ready for communication.")
         
+        piPhoneDelegate?.didUpdateBluetoothState(state: central.state)
         startScanning()
     }
     
@@ -110,19 +114,20 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             return
         }
         
+        piPhoneDelegate?.didFailToConnect()
         startScanning()
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        piPhoneDelegate?.didConnect()
         print("Successfully connected to the peripheral.")
+        piPhoneDelegate?.didConnect()
         peripheral.discoverServices([serviceUUID])
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Peripheral got disconnected.")
+        piPhoneDelegate?.didDisconnect()
         startScanning()
-        
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {

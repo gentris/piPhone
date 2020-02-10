@@ -122,9 +122,35 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
         }
     }
     
-    func didConnect() {}
-    func didDisconnect() {}
-    func didFailToConnect() {}
+    func didUpdateBluetoothState(state: CBManagerState) {
+        var stateString = ""
+        
+        if (state == .poweredOff) {
+            stateString = "OFF"
+        } else if (state == .poweredOn) {
+            stateString = "ON"
+        } else {
+            stateString = "N/A"
+        }
+            
+        let data = "[piPhone] Bluetooth state: \(stateString).\r\n"
+        termView.write(data)
+    }
+
+    func didConnect() {
+        let data = "[piPhone] Connected to peripheral.\r\n"
+        termView.write(data)
+    }
+    
+    func didDisconnect() {
+        let data = "[piPhone] Disconnected from peripheral.\r\n"
+        termView.write(data)
+    }
+    
+    func didFailToConnect() {
+        let data = "[piPhone] Failed to connect to peripheral.\r\n"
+        termView.write(data)
+    }
 
     func didExecuteCommand(response: Data) {
         let data:String = String(data: response, encoding: String.Encoding.utf8)!
