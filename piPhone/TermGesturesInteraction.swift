@@ -94,14 +94,9 @@ class TermGesturesInteraction: NSObject, UIInteraction {
     }
     
     @objc func handleOneTap(_ recognizer: UITapGestureRecognizer) {
-        let point = recognizer.location(in: recognizer.view)
-        
         switch recognizer.state {
             case .recognized:
-                termView?.evaluateJavaScript("term_reportMouseClick(\(point.x), \(point.y), 1, true));", completionHandler: nil)
                 keyboardView?.becomeFirstResponder()
-                termView?.setNeedsLayout()
-                keyboardView?.setNeedsLayout()
             default: break
         }
     }
