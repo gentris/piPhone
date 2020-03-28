@@ -25,9 +25,15 @@
 import WebKit
 
 class KeyboardView: KBWebViewBase {
+    var controller: KeyboardAccessoryViewController = KeyboardAccessoryViewController()
+    
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         self.load()
+    }
+    
+    override var inputAccessoryViewController: UIInputViewController? {
+        return self.controller
     }
     
     override var inputAccessoryView: UIView? {

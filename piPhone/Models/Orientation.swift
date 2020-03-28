@@ -7,3 +7,8 @@
 //
 
 import Foundation
+
+enum Orientation {
+    case left
+    case right
+}
