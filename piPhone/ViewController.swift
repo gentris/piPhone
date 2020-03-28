@@ -27,7 +27,6 @@ import CoreBluetooth
 
 class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate {
     var peripheral: Peripheral?
-    private var keyboardIsShown = false
     private var keyboardRect: CGRect?
     private var termView: TermView!
     private var keyboardView: KeyboardView!
@@ -38,16 +37,11 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.loadSubViews()
         self.addKeyboardObservers()
-    }
-    
-    func addKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
         
     @objc func keyboardWillShow(notification: NSNotification) {
-        self.keyboardIsShown = true
         if let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             self.keyboardRect = keyboardRect
             self.termView.frame = self.termViewFrame()
@@ -56,15 +50,14 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
-        self.keyboardIsShown = false
         self.keyboardRect = nil
         self.termView.frame = self.termViewFrame()
         self.view.setNeedsLayout()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.loadSubViews()
+    private func addKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     private func loadSubViews() {
@@ -117,7 +110,9 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
             if (op == "out") {
                 let data: String = body["data"] as! String
                 peripheral?.write(data: data, characteristic: peripheral?.commandCharacteristic);
-                print("kbData: ", data)
+//                peripheral?.write(data: "\u{0003}", characteristic: peripheral?.commandCharacteristic)
+//                print("ASCII: ", Character("C").asciiValue!)
+//                print("kbData: ", data)
             }
         }
     }
