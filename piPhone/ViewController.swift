@@ -25,7 +25,7 @@
 import UIKit
 import CoreBluetooth
 
-class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate {
+class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate, SpecialKeysDelegate {
     var peripheral: Peripheral?
     private var keyboardRect: CGRect?
     private var termView: TermView!
@@ -44,14 +44,14 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             self.keyboardRect = keyboardRect
-            self.termView.frame = self.termViewFrame()
+            self.termView.frame = self.getTermViewFrame()
             self.view.setNeedsLayout()
         }
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
         self.keyboardRect = nil
-        self.termView.frame = self.termViewFrame()
+        self.termView.frame = self.getTermViewFrame()
         self.view.setNeedsLayout()
     }
     
@@ -66,18 +66,18 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
         configuration.userContentController.add(self, name: termViewScriptName)
         configuration.userContentController.add(self, name: keyboardViewScriptName)
         
-        termView = TermView(frame: termViewFrame(), configuration: configuration)
-        keyboardView = KeyboardView(frame: .zero, configuration: configuration)
-        coverView = UIView(frame: UIScreen.main.bounds)
+        self.termView = TermView(frame: self.getTermViewFrame(), configuration: configuration)
+        self.keyboardView = KeyboardView(frame: .zero, configuration: configuration, specialKeysDelegate: self)
+        self.coverView = UIView(frame: UIScreen.main.bounds)
         
-        coverView.backgroundColor = .black
+        self.coverView.backgroundColor = .black
         
-        let interaction = TermGesturesInteraction(jsScrollerPath: "t.scrollPort_.scroller_", keyboardView: keyboardView)
-        termView.addInteraction(interaction)
+        let interaction = TermGesturesInteraction(jsScrollerPath: "t.scrollPort_.scroller_", keyboardView: self.keyboardView)
+        self.termView.addInteraction(interaction)
         
-        view.addSubview(termView)
-        view.addSubview(keyboardView)
-        view.addSubview(coverView)
+        self.view.addSubview(termView)
+        self.view.addSubview(keyboardView)
+        self.view.addSubview(coverView)
     }
     
     // Delegate functions
@@ -95,11 +95,11 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
             } else if operation == "fontSizeChanged" {
                 
             } else if operation == "sigwinch" {
-                termView.cols = data["cols"] as! Int
-                termView.rows = data["rows"] as! Int
+                self.termView.cols = data["cols"] as! Int
+                self.termView.rows = data["rows"] as! Int
                 
-                let data = "{\"cols\": \(termView.cols), \"rows\": \(termView.rows)}"
-                peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
+                let data = "{\"cols\": \(self.termView.cols), \"rows\": \(self.termView.rows)}"
+                self.peripheral?.write(data: data, characteristic: self.peripheral?.screenCharacteristic)
             }
         } else if message.name == self.keyboardViewScriptName {
             let body: NSDictionary = message.body as! NSDictionary
@@ -109,10 +109,11 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
             
             if (op == "out") {
                 let data: String = body["data"] as! String
-                peripheral?.write(data: data, characteristic: peripheral?.commandCharacteristic);
-//                peripheral?.write(data: "\u{0003}", characteristic: peripheral?.commandCharacteristic)
-//                print("ASCII: ", Character("C").asciiValue!)
-//                print("kbData: ", data)
+                self.peripheral?.write(data: data, characteristic: self.peripheral?.commandCharacteristic);
+                
+                if self.keyboardView.controlKeyIsActive {
+                    self.keyboardView.reportControlKeyReleased()
+                }
             }
         }
     }
@@ -129,38 +130,48 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
         }
             
         let data = "[piPhone] Bluetooth state: \(stateString).\r\n"
-        termView.write(data)
+        self.termView.write(data)
     }
 
     func didConnect() {
         let data = "[piPhone] Connected to peripheral.\r\n"
-        termView.write(data)
+        self.termView.write(data)
     }
     
     func didDisconnect() {
         let data = "[piPhone] Disconnected from peripheral.\r\n"
-        termView.write(data)
+        self.termView.write(data)
     }
     
     func didFailToConnect() {
         let data = "[piPhone] Failed to connect to peripheral.\r\n"
-        termView.write(data)
+        self.termView.write(data)
     }
 
     func didExecuteCommand(response: Data) {
-        let data:String = String(data: response, encoding: String.Encoding.utf8)!
-        termView.write(data)
-    }
-    
-    func didUpdateNotificationStateFor(characteristic: CBCharacteristic) {
-        if characteristic == peripheral?.screenCharacteristic {
-            let data = "{\"cols\": \(termView.cols), \"rows\": \(termView.rows)}"
-            peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
+        if let data:String = String(data: response, encoding: String.Encoding.utf8) {
+            self.termView.write(data)
         }
     }
     
+    func didUpdateNotificationStateFor(characteristic: CBCharacteristic) {
+        if characteristic == self.peripheral?.screenCharacteristic {
+            let data = "{\"cols\": \(self.termView.cols), \"rows\": \(self.termView.rows)}"
+            self.peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
+        }
+    }
+    
+    func didClickSpecialKey(key: Key) {
+        let data = key.value.rawValue
+        self.peripheral?.write(data: data, characteristic: self.peripheral?.commandCharacteristic)
+    }
+    
+    func didClickControlKey(key: Key) {
+        self.keyboardView.reportControlKeyPressed()
+    }
+    
     func terminalReady(_ data: NSDictionary) {
-        UIView.transition(from: coverView, to: termView, duration: 0.3, options: .transitionCrossDissolve) { finished in
+        UIView.transition(from: self.coverView, to: self.termView, duration: 0.3, options: .transitionCrossDissolve) { finished in
             self.coverView.removeFromSuperview()
             self.keyboardView.readyForInput = true
             self.keyboardView.becomeFirstResponder()
@@ -173,7 +184,7 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate 
         }
     }
     
-    func termViewFrame() -> CGRect {
+    func getTermViewFrame() -> CGRect {
         var inset = view.window?.safeAreaInsets ?? .zero
         
         if let height = self.keyboardRect?.height {

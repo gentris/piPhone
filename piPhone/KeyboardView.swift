@@ -26,6 +26,16 @@ import WebKit
 
 class KeyboardView: KBWebViewBase {
     var controller: KeyboardAccessoryViewController = KeyboardAccessoryViewController()
+    var controlKeyIsActive: Bool = false
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(frame: CGRect, configuration: WKWebViewConfiguration, specialKeysDelegate: SpecialKeysDelegate) {
+        super.init(frame: frame, configuration: configuration)
+        self.controller.keysDelegate = specialKeysDelegate
+    }
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -43,5 +53,24 @@ class KeyboardView: KBWebViewBase {
     private func load() {
         let url = Bundle.main.url(forResource: "kb", withExtension: "html")!
         loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+    }
+    
+    func reportControlKeyPressed() {
+        self.controlKeyIsActive = !self.controlKeyIsActive
+        
+        var payload: String
+        if self.controlKeyIsActive {
+            payload = "_onKB(\"toolbar-mods\", 262144);"
+        } else {
+            payload = "_onKB(\"toolbar-mods\", 0);"
+        }
+        
+        self.evaluateJavaScript(payload, completionHandler: nil)
+    }
+    
+    func reportControlKeyReleased() {
+        self.controlKeyIsActive = false
+        let payload = "_onKB(\"toolbar-mods\", 0);"
+        self.evaluateJavaScript(payload, completionHandler: nil)
     }
 }

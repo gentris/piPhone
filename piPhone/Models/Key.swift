@@ -21,11 +21,11 @@
 import Foundation
 
 class Key {
-    var name: String?
-    var value: String?
+    var name: String
+    var value: SpecialKeyValue
     var orientation: Orientation
     
-    init(name: String, value: String, orientation: Orientation) {
+    init(name: String, value: SpecialKeyValue, orientation: Orientation) {
         self.name = name
         self.value = value
         self.orientation = orientation

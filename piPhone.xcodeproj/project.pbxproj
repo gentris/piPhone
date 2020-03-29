@@ -13,6 +13,7 @@
 		8227D4A12424F4000036B7A8 /* KeyboardAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */; };
 		8227D515242B9F980036B7A8 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D514242B9F980036B7A8 /* Orientation.swift */; };
 		8227D517242C20D30036B7A8 /* VerticalArrowKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D516242C20D30036B7A8 /* VerticalArrowKeyView.swift */; };
+		8243C3DD242FE65B008D85C5 /* SpecialKeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8243C3DC242FE65B008D85C5 /* SpecialKeyValue.swift */; };
 		828214CF23E087E4002EF5AB /* TermView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214CE23E087E4002EF5AB /* TermView.swift */; };
 		828214D123E087F3002EF5AB /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214D023E087F3002EF5AB /* KeyboardView.swift */; };
 		828214D523E08842002EF5AB /* KBWebViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 828214D423E08842002EF5AB /* KBWebViewBase.m */; };
@@ -52,6 +53,7 @@
 		8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryViewController.swift; sourceTree = "<group>"; };
 		8227D514242B9F980036B7A8 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		8227D516242C20D30036B7A8 /* VerticalArrowKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalArrowKeyView.swift; sourceTree = "<group>"; };
+		8243C3DC242FE65B008D85C5 /* SpecialKeyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialKeyValue.swift; sourceTree = "<group>"; };
 		828214CE23E087E4002EF5AB /* TermView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermView.swift; sourceTree = "<group>"; };
 		828214D023E087F3002EF5AB /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		828214D223E08841002EF5AB /* piPhone-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "piPhone-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 				8282150223E30572002EF5AB /* Session.swift */,
 				8227D49E2423DD250036B7A8 /* Key.swift */,
 				8227D514242B9F980036B7A8 /* Orientation.swift */,
+				8243C3DC242FE65B008D85C5 /* SpecialKeyValue.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8282150323E30572002EF5AB /* Session.swift in Sources */,
+				8243C3DD242FE65B008D85C5 /* SpecialKeyValue.swift in Sources */,
 				82DCBEF023A84E7300D562B4 /* ViewController.swift in Sources */,
 				8227D49D242249350036B7A8 /* KeyView.swift in Sources */,
 				8227D49924223F670036B7A8 /* KeyboardUtil.swift in Sources */,

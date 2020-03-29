@@ -8,13 +8,38 @@
 
 import UIKit
 
+protocol SpecialKeysDelegate {
+    func didClickSpecialKey(key: Key)
+    func didClickControlKey(key: Key)
+}
+
 class KeyboardAccessoryViewController: UIInputViewController {
     var width: CGFloat = UIScreen.main.bounds.width
     var height: CGFloat = 45.0
-    var keys: [Key] = [Key]()
     var leftKeyViews: [KeyView] = [KeyView]()
     var rightKeyViews: [KeyView] = [KeyView]()
     var keyboardAccessoryView: KeyboardAccessoryView?
+    var keysDelegate: SpecialKeysDelegate?
+    
+    var escKey: Key = Key(name: "esc", value: .esc, orientation: .left)
+    let ctrlKey: Key = Key(name: "ctrl", value: .ctrl, orientation: .left)
+    let tabKey: Key = Key(name: "tab", value: .tab, orientation: .left)
+    let upKey: Key = Key(name: "▲", value: .up, orientation: .right)
+    let downKey: Key = Key(name: "▼", value: .down, orientation: .right)
+    let rightKey: Key = Key(name: "▶", value: .right, orientation: .right)
+    let leftKey: Key = Key(name: "◀", value: .left, orientation: .right)
+    var keys: [Key] {
+        return [
+            escKey,
+            ctrlKey,
+            tabKey,
+            upKey,
+            downKey,
+            rightKey,
+            leftKey
+        ]
+    }
+    
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
@@ -29,27 +54,27 @@ class KeyboardAccessoryViewController: UIInputViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addKeys()
+        self.addKeyViews()
         self.addActionListeners()
     }
     
-    private func addKeys() {
-        self.addKey(data: Key(name: "esc", value: "esc", orientation: .left), action: self.handleControlKey(_:))
-        self.addKey(data: Key(name: "ctrl", value: "ctrl", orientation: .left), action: self.handleControlKey(_:))
-        self.addKey(data: Key(name: "tab", value: "tab", orientation: .left), action: self.handleTabKey(_:))
+    private func addKeyViews() {
+        self.addKeyView(data: escKey)
+        self.addKeyView(data: ctrlKey)
+        self.addKeyView(data: tabKey)
         
-        self.addKey(data: Key(name: "▶", value: "▶", orientation: .right), action: nil)
-        self.addVerticalArrowKeys(topKey: Key(name: "▲", value: "▲", orientation: .right), bottomKey: Key(name: "▼", value: "▼", orientation: .right))
-        self.addKey(data: Key(name: "◀", value: "◀", orientation: .right), action: nil)
+        self.addKeyView(data: rightKey)
+        self.addVerticalArrowKeyViews(for: upKey, and: downKey)
+        self.addKeyView(data: leftKey)
     }
     
-    private func addKey(data key: Key, action: ((KeyView?) -> Void)?) {
+    private func addKeyView(data key: Key) {
         let keyView = KeyView(title: key.name)
         self.addKeyViewToSuperview(keyView: keyView, orientation: key.orientation)
         self.addKeyViewConstraints(for: keyView, orientation: key.orientation)
     }
     
-    private func addVerticalArrowKeys(topKey: Key, bottomKey: Key) {
+    private func addVerticalArrowKeyViews(for topKey: Key, and bottomKey: Key) {
         if topKey.orientation != bottomKey.orientation {
             return
         }
@@ -150,20 +175,40 @@ class KeyboardAccessoryViewController: UIInputViewController {
     
     private func addActionListeners() {
         let keyViews = self.leftKeyViews + self.rightKeyViews
+        
         for keyView in keyViews {
             if keyView.titleLabel?.text == "ctrl" {
                 keyView.addTarget(self, action: #selector(self.handleControlKey(_:)), for: .touchUpInside)
-            } else if keyView.titleLabel?.text == "tab" {
-                keyView.addTarget(self, action: #selector(self.handleTabKey(_:)), for: .touchUpInside)
+            } else {
+                keyView.addTarget(self, action: #selector(self.handleSpecialKey(_:)), for: .touchUpInside)
             }
         }
     }
     
-    @objc func handleControlKey(_ sender: KeyView?) {
-        print("Control key clicked...")
+    @objc func handleControlKey(_ keyView: KeyView?) {
+        keysDelegate?.didClickControlKey(key: self.ctrlKey)
     }
     
-    @objc func handleTabKey(_ sender: KeyView?) {
-        print("Tab key clicked...")
+    @objc func handleSpecialKey(_ keyView: KeyView?) {
+        var key: Key?
+        
+        if (keyView?.titleLabel?.text == "esc") {
+            key = self.keys.first(where: {$0.name == "esc"})
+        } else if (keyView?.titleLabel?.text == "tab") {
+            key = self.keys.first(where: {$0.name == "tab"})
+        } else if (keyView?.titleLabel?.text == "▲") {
+            key = self.keys.first(where: {$0.name == "▲"})
+        } else if (keyView?.titleLabel?.text == "▼") {
+            key = self.keys.first(where: {$0.name == "▼"})
+        } else if (keyView?.titleLabel?.text == "▶") {
+            key = self.keys.first(where: {$0.name == "▶"})
+        } else if (keyView?.titleLabel?.text == "◀") {
+            key = self.keys.first(where: {$0.name == "◀"})
+        }
+        
+        if let key = key {
+            self.keysDelegate?.didClickSpecialKey(key: key)
+        }
+
     }
 }
