@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		8227D49924223F670036B7A8 /* KeyboardUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D49824223F670036B7A8 /* KeyboardUtil.swift */; };
 		8227D4A12424F4000036B7A8 /* KeyboardAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */; };
-		8227D515242B9F980036B7A8 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D514242B9F980036B7A8 /* Orientation.swift */; };
 		8243C3DD242FE65B008D85C5 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8243C3DC242FE65B008D85C5 /* Keys.swift */; };
 		825577792F0430AD005B3EA3 /* KeyboardAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825577782F04309E005B3EA3 /* KeyboardAccessoryView.swift */; };
 		828214CF23E087E4002EF5AB /* TermView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214CE23E087E4002EF5AB /* TermView.swift */; };
@@ -46,7 +45,6 @@
 /* Begin PBXFileReference section */
 		8227D49824223F670036B7A8 /* KeyboardUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtil.swift; sourceTree = "<group>"; };
 		8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryViewController.swift; sourceTree = "<group>"; };
-		8227D514242B9F980036B7A8 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		8243C3DC242FE65B008D85C5 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
 		825577782F04309E005B3EA3 /* KeyboardAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryView.swift; sourceTree = "<group>"; };
 		8255777A2F043C9C005B3EA3 /* KeyboardAccessoryHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryHostView.swift; sourceTree = "<group>"; };
@@ -140,7 +138,6 @@
 			children = (
 				8282150023E1F418002EF5AB /* Peripheral.swift */,
 				8282150223E30572002EF5AB /* Session.swift */,
-				8227D514242B9F980036B7A8 /* Orientation.swift */,
 				8243C3DC242FE65B008D85C5 /* Keys.swift */,
 			);
 			path = Models;
@@ -302,7 +299,6 @@
 				8282150123E1F418002EF5AB /* Peripheral.swift in Sources */,
 				828214D523E08842002EF5AB /* KBWebViewBase.m in Sources */,
 				828214D723E08D50002EF5AB /* TermGesturesInteraction.swift in Sources */,
-				8227D515242B9F980036B7A8 /* Orientation.swift in Sources */,
 				82DCBEEC23A84E7300D562B4 /* AppDelegate.swift in Sources */,
 				828214CF23E087E4002EF5AB /* TermView.swift in Sources */,
 				828214D123E087F3002EF5AB /* KeyboardView.swift in Sources */,

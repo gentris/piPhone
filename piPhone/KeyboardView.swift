@@ -25,7 +25,7 @@
 import WebKit
 
 class KeyboardView: KBWebViewBase {
-    var controller: KeyboardAccessoryViewController = KeyboardAccessoryViewController()
+    var keyboardAccessoryViewController: KeyboardAccessoryViewController = KeyboardAccessoryViewController()
     var controlKeyIsActive: Bool = false
     
     required init?(coder: NSCoder) {
@@ -34,7 +34,7 @@ class KeyboardView: KBWebViewBase {
     
     init(frame: CGRect, configuration: WKWebViewConfiguration, specialKeysDelegate: SpecialKeysDelegate) {
         super.init(frame: frame, configuration: configuration)
-        self.controller.keysDelegate = specialKeysDelegate
+        self.keyboardAccessoryViewController.keysDelegate = specialKeysDelegate
     }
     
     override func didMoveToSuperview() {
@@ -43,7 +43,7 @@ class KeyboardView: KBWebViewBase {
     }
     
     override var inputAccessoryViewController: UIInputViewController? {
-        return self.controller
+        return self.keyboardAccessoryViewController
     }
     
     override var inputAccessoryView: UIView? {
