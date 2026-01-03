@@ -62,11 +62,14 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate,
     
     private func loadSubViews() {
         let configuration = WKWebViewConfiguration()
-        configuration.selectionGranularity = .character
         configuration.userContentController.add(self, name: termViewScriptName)
         configuration.userContentController.add(self, name: keyboardViewScriptName)
         
         self.termView = TermView(frame: self.getTermViewFrame(), configuration: configuration)
+        // make the webview inspectable in safari
+//        if #available(iOS 16.4, *) {
+//            self.termView.isInspectable = true
+//        }
         self.keyboardView = KeyboardView(frame: .zero, configuration: configuration, specialKeysDelegate: self)
         self.coverView = UIView(frame: UIScreen.main.bounds)
         
