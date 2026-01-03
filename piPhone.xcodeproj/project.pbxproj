@@ -8,12 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		8227D49924223F670036B7A8 /* KeyboardUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D49824223F670036B7A8 /* KeyboardUtil.swift */; };
-		8227D49D242249350036B7A8 /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D49C242249350036B7A8 /* KeyView.swift */; };
-		8227D49F2423DD250036B7A8 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D49E2423DD250036B7A8 /* Key.swift */; };
 		8227D4A12424F4000036B7A8 /* KeyboardAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */; };
 		8227D515242B9F980036B7A8 /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D514242B9F980036B7A8 /* Orientation.swift */; };
-		8227D517242C20D30036B7A8 /* VerticalArrowKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8227D516242C20D30036B7A8 /* VerticalArrowKeyView.swift */; };
-		8243C3DD242FE65B008D85C5 /* SpecialKeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8243C3DC242FE65B008D85C5 /* SpecialKeyValue.swift */; };
+		8243C3DD242FE65B008D85C5 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8243C3DC242FE65B008D85C5 /* Keys.swift */; };
+		825577792F0430AD005B3EA3 /* KeyboardAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825577782F04309E005B3EA3 /* KeyboardAccessoryView.swift */; };
 		828214CF23E087E4002EF5AB /* TermView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214CE23E087E4002EF5AB /* TermView.swift */; };
 		828214D123E087F3002EF5AB /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 828214D023E087F3002EF5AB /* KeyboardView.swift */; };
 		828214D523E08842002EF5AB /* KBWebViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 828214D423E08842002EF5AB /* KBWebViewBase.m */; };
@@ -43,17 +41,15 @@
 		82DCBEF823A84E7400D562B4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 82DCBEF623A84E7400D562B4 /* LaunchScreen.storyboard */; };
 		82E4FFA523A967A400898FCC /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E4FFA423A967A400898FCC /* BluetoothManager.swift */; };
 		82E4FFA923A9837F00898FCC /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E4FFA823A9837F00898FCC /* ExternalAccessory.framework */; };
-		82FC94F424213A120034C484 /* KeyboardAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FC94F324213A120034C484 /* KeyboardAccessoryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		8227D49824223F670036B7A8 /* KeyboardUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtil.swift; sourceTree = "<group>"; };
-		8227D49C242249350036B7A8 /* KeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
-		8227D49E2423DD250036B7A8 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryViewController.swift; sourceTree = "<group>"; };
 		8227D514242B9F980036B7A8 /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
-		8227D516242C20D30036B7A8 /* VerticalArrowKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalArrowKeyView.swift; sourceTree = "<group>"; };
-		8243C3DC242FE65B008D85C5 /* SpecialKeyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialKeyValue.swift; sourceTree = "<group>"; };
+		8243C3DC242FE65B008D85C5 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		825577782F04309E005B3EA3 /* KeyboardAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryView.swift; sourceTree = "<group>"; };
+		8255777A2F043C9C005B3EA3 /* KeyboardAccessoryHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryHostView.swift; sourceTree = "<group>"; };
 		828214CE23E087E4002EF5AB /* TermView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermView.swift; sourceTree = "<group>"; };
 		828214D023E087F3002EF5AB /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		828214D223E08841002EF5AB /* piPhone-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "piPhone-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -88,7 +84,6 @@
 		82E4FFA423A967A400898FCC /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		82E4FFA623A9837F00898FCC /* piPhone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = piPhone.entitlements; sourceTree = "<group>"; };
 		82E4FFA823A9837F00898FCC /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
-		82FC94F324213A120034C484 /* KeyboardAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAccessoryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,9 +140,8 @@
 			children = (
 				8282150023E1F418002EF5AB /* Peripheral.swift */,
 				8282150223E30572002EF5AB /* Session.swift */,
-				8227D49E2423DD250036B7A8 /* Key.swift */,
 				8227D514242B9F980036B7A8 /* Orientation.swift */,
-				8243C3DC242FE65B008D85C5 /* SpecialKeyValue.swift */,
+				8243C3DC242FE65B008D85C5 /* Keys.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -164,6 +158,7 @@
 		82DCBEDF23A84E7300D562B4 = {
 			isa = PBXGroup;
 			children = (
+				8255777A2F043C9C005B3EA3 /* KeyboardAccessoryHostView.swift */,
 				82DCBEEA23A84E7300D562B4 /* piPhone */,
 				82DCBEE923A84E7300D562B4 /* Products */,
 				82E4FFA723A9837F00898FCC /* Frameworks */,
@@ -186,6 +181,7 @@
 				8282150423E30DAC002EF5AB /* Extensions */,
 				828214FF23E1F322002EF5AB /* Models */,
 				82E4FFA623A9837F00898FCC /* piPhone.entitlements */,
+				825577782F04309E005B3EA3 /* KeyboardAccessoryView.swift */,
 				82DCBEEB23A84E7300D562B4 /* AppDelegate.swift */,
 				82DCBEED23A84E7300D562B4 /* SceneDelegate.swift */,
 				82DCBEEF23A84E7300D562B4 /* ViewController.swift */,
@@ -199,10 +195,7 @@
 				828214D023E087F3002EF5AB /* KeyboardView.swift */,
 				828214D623E08D50002EF5AB /* TermGesturesInteraction.swift */,
 				828214D223E08841002EF5AB /* piPhone-Bridging-Header.h */,
-				82FC94F324213A120034C484 /* KeyboardAccessoryView.swift */,
-				8227D49C242249350036B7A8 /* KeyView.swift */,
 				8227D4A02424F4000036B7A8 /* KeyboardAccessoryViewController.swift */,
-				8227D516242C20D30036B7A8 /* VerticalArrowKeyView.swift */,
 			);
 			path = piPhone;
 			sourceTree = "<group>";
@@ -301,14 +294,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				8282150323E30572002EF5AB /* Session.swift in Sources */,
-				8243C3DD242FE65B008D85C5 /* SpecialKeyValue.swift in Sources */,
+				8243C3DD242FE65B008D85C5 /* Keys.swift in Sources */,
 				82DCBEF023A84E7300D562B4 /* ViewController.swift in Sources */,
-				8227D49D242249350036B7A8 /* KeyView.swift in Sources */,
 				8227D49924223F670036B7A8 /* KeyboardUtil.swift in Sources */,
+				825577792F0430AD005B3EA3 /* KeyboardAccessoryView.swift in Sources */,
 				8282150723E30DC4002EF5AB /* UIView.swift in Sources */,
-				82FC94F424213A120034C484 /* KeyboardAccessoryView.swift in Sources */,
 				8282150123E1F418002EF5AB /* Peripheral.swift in Sources */,
-				8227D517242C20D30036B7A8 /* VerticalArrowKeyView.swift in Sources */,
 				828214D523E08842002EF5AB /* KBWebViewBase.m in Sources */,
 				828214D723E08D50002EF5AB /* TermGesturesInteraction.swift in Sources */,
 				8227D515242B9F980036B7A8 /* Orientation.swift in Sources */,
@@ -317,7 +308,6 @@
 				828214D123E087F3002EF5AB /* KeyboardView.swift in Sources */,
 				8282150923E30E01002EF5AB /* UIGestureRecognizer.swift in Sources */,
 				8227D4A12424F4000036B7A8 /* KeyboardAccessoryViewController.swift in Sources */,
-				8227D49F2423DD250036B7A8 /* Key.swift in Sources */,
 				82E4FFA523A967A400898FCC /* BluetoothManager.swift in Sources */,
 				82DCBEEE23A84E7300D562B4 /* SceneDelegate.swift in Sources */,
 			);
@@ -460,12 +450,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TUNNT73NJ4;
 				INFOPLIST_FILE = piPhone/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.gentrisleci.piPhone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gentrisleci.piPhone2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "piPhone/piPhone-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -483,12 +473,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = TUNNT73NJ4;
 				INFOPLIST_FILE = piPhone/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.gentrisleci.piPhone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gentrisleci.piPhone2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "piPhone/piPhone-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

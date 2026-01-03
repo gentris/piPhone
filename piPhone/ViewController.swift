@@ -165,8 +165,7 @@ class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate,
     }
     
     func didClickSpecialKey(key: Key) {
-        let data = key.value.rawValue
-        self.peripheral?.write(data: data, characteristic: self.peripheral?.commandCharacteristic)
+        self.peripheral?.write(data: key.ansi, characteristic: self.peripheral?.commandCharacteristic)
     }
     
     func didClickControlKey(key: Key) {

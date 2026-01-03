@@ -1,21 +1,21 @@
 import SwiftUI
 
 struct KeyboardAccessoryView: View {
-    let onTap: (String) -> Void
+    let onTap: (KeyName) -> Void
 
     var body: some View {
         GeometryReader { geo in
             HStack(spacing: 5) {
-                keycap("esc") { onTap("esc") }
-                keycap("ctrl") { onTap("ctrl") }
-                keycap("tab") { onTap("tab") }
+                keycap(keys[.esc]!)
+                keycap(keys[.ctrl]!)
+                keycap(keys[.tab]!)
 
                 Spacer(minLength: 10)
 
-                keycap("◀") { onTap("left") }
-                keycap("▼") { onTap("down") }
-                keycap("▲") { onTap("up") }
-                keycap("▶") { onTap("right") }
+                keycap(keys[.left]!)
+                keycap(keys[.down]!)
+                keycap(keys[.up]!)
+                keycap(keys[.right]!)
             }
             .padding(.horizontal, 4)
             .frame(width: geo.size.width - 20, height: 44) // <-- 10 padding on each side
@@ -37,16 +37,13 @@ struct KeyboardAccessoryView: View {
         .frame(height: 50)
     }
 
-
-
-    private func keycap(_ title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
+    private func keycap(_ key: Key) -> some View {
+        Button(action: { onTap(key.name) }) {
+            Text(key.title)
                 .font(.system(size: 17, weight: .regular))
                 .foregroundStyle(.primary)
                 .frame(minWidth: 46, minHeight: 36)
-        }
-        .buttonStyle(KeycapButtonStyle())
+        }.buttonStyle(KeycapButtonStyle())
     }
 }
 
