@@ -25,7 +25,7 @@
 import UIKit
 import CoreBluetooth
 
-class ViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate, SpecialKeysDelegate {
+class TerminalViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate, SpecialKeysDelegate {
     var peripheral: Peripheral?
     private var keyboardRect: CGRect?
     private var termView: TermView!
