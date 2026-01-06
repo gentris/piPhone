@@ -1,8 +1,8 @@
 //
-//  AppsCards.swift
-//  swiftUI
+//  AppsView.swift
+//  piPhone
 //
-//  Created by Eris Leci on 1/6/26.
+//  Created by Gentris Leci on 1/6/26.
 //
 
 import SwiftUI
