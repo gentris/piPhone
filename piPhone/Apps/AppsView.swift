@@ -49,6 +49,10 @@ struct AppsView: View {
             .init(title: "Add new Apple", icon: "phone"),
             .init(title: "Add new Ticket", icon: "map"),
             .init(title: "Should add a new Ticket", icon: "headphones"),
+            .init(title: "Should add a new Ticket", icon: "headphones"),
+            .init(title: "Should add a new Ticket", icon: "headphones"),
+            .init(title: "Should add a new Ticket", icon: "headphones"),
+            .init(title: "Should add a new Ticket", icon: "headphones"),
         ]),
         .init(title: "Custom Apps", items: [
             .init(title: "Change Theme", icon: "envelope"),
@@ -58,12 +62,9 @@ struct AppsView: View {
         ])
     ]
 
-    private let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
-
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: 110))]
+    }
 
     var body: some View {
         NavigationStack {
