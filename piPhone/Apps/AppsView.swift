@@ -13,58 +13,45 @@ struct AppItem: Identifiable {
     var icon: String
 }
 
-struct AppSection: Identifiable {
-    var id = UUID()
-    var title: String
-    var items: [AppItem]
-}
-
 struct AppsView: View {
     @State private var showAddSheet = false
     @State private var newTitle = ""
     @State private var newIcon = ""
     @State private var searchText = ""
 
-    
-    private func addNewApp() {
-        let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-
-        let newItem = AppItem(
-            title: trimmed,
-            icon: newIcon,
-        )
-
-        sections[0].items.append(newItem)
-
-        newTitle = ""
-        newIcon = ""
-        showAddSheet = false
-    }
-    
-    @State private var sections: [AppSection] = [
-        .init(title: "Build-in Apps", items: [
-            .init(title: "UI change", icon: "photo"),
-            .init(title: "Take a Break", icon: "timer"),
-            .init(title: "Add new Task", icon: "map"),
-            .init(title: "Add new Apple", icon: "phone"),
-            .init(title: "Add new Ticket", icon: "map"),
-            .init(title: "Should add a new Ticket", icon: "headphones"),
-            .init(title: "Should add a new Ticket", icon: "headphones"),
-            .init(title: "Should add a new Ticket", icon: "headphones"),
-            .init(title: "Should add a new Ticket", icon: "headphones"),
-            .init(title: "Should add a new Ticket", icon: "headphones"),
-        ]),
-        .init(title: "Custom Apps", items: [
-            .init(title: "Change Theme", icon: "envelope"),
-            .init(title: "Phone details", icon: "phone"),
-            .init(title: "Take that dollar", icon: "dollarsign"),
-            .init(title: "CreditCard", icon: "creditcard"),
-        ])
+    @State private var apps: [AppItem] = [
+        .init(title: "UI change", icon: "photo"),
+        .init(title: "Take a Break", icon: "timer"),
+        .init(title: "Add new Task", icon: "map"),
+        .init(title: "Add new Apple", icon: "phone"),
+        .init(title: "Add new Ticket", icon: "map"),
+        .init(title: "Should add a new Ticket", icon: "headphones"),
+        .init(title: "Change Theme", icon: "envelope"),
+        .init(title: "Phone details", icon: "phone"),
+        .init(title: "Take that dollar", icon: "dollarsign"),
+        .init(title: "CreditCard", icon: "creditcard"),
     ]
 
     private var columns: [GridItem] {
         [GridItem(.adaptive(minimum: 110))]
+    }
+
+    private var filteredApps: [AppItem] {
+        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return apps }
+        return apps.filter { $0.title.localizedCaseInsensitiveContains(q) }
+    }
+
+    private func addNewApp() {
+        let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        let newItem = AppItem(title: trimmed, icon: newIcon)
+        apps.append(newItem)
+
+        newTitle = ""
+        newIcon = ""
+        showAddSheet = false
     }
 
     var body: some View {
@@ -74,26 +61,20 @@ struct AppsView: View {
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 18) {
-                        ForEach(filteredSections) { section in
-                            SectionHeader(title: section.title)
-
-                            LazyVGrid(columns: columns, spacing: 12) {
-                                ForEach(section.items) { item in
-                                    NavigationLink {
-                                        ShortcutDetailView(item: item)
-                                    } label: {
-                                        AppIconCell(item: item)
-                                            .contentShape(Rectangle())
-                                            .contextMenu {
-                                                Button { } label: { Label("Edit", systemImage: "pencil") }
-                                                Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
-                                                Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
-                                            }
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(filteredApps) { item in
+                            NavigationLink {
+                                ShortcutDetailView(item: item)
+                            } label: {
+                                AppIconCell(item: item)
+                                    .contentShape(Rectangle())
+                                    .contextMenu {
+                                        Button { } label: { Label("Edit", systemImage: "pencil") }
+                                        Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
+                                        Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
                                     }
-                                    .buttonStyle(.plain)
-                                }
                             }
+                            .buttonStyle(.plain)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -116,23 +97,6 @@ struct AppsView: View {
             }
         }
     }
-    
-    private var filteredSections: [AppSection] {
-        if searchText.isEmpty {
-            return sections
-        }
-
-        return sections.compactMap { section in
-            let filteredItems = section.items.filter {
-                $0.title.localizedCaseInsensitiveContains(searchText)
-            }
-
-            return filteredItems.isEmpty
-                ? nil
-                : AppSection(title: section.title, items: filteredItems)
-        }
-    }
-
 }
 
 
@@ -169,8 +133,6 @@ struct AppCard: View {
         .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
     }
 }
-
-
 
 
 struct AppIconCell: View {
