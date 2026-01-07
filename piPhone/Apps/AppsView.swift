@@ -66,13 +66,24 @@ struct AppsView: View {
                             NavigationLink {
                                 ShortcutDetailView(item: item)
                             } label: {
-                                AppIconCell(item: item)
-                                    .contentShape(Rectangle())
-                                    .contextMenu {
-                                        Button { } label: { Label("Edit", systemImage: "pencil") }
-                                        Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
-                                        Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
-                                    }
+                                VStack(spacing: 8) {
+                                    AppCard(item: item)
+                                        .contentShape(Rectangle())
+                                        .contextMenu {
+                                            Button { } label: { Label("Edit", systemImage: "pencil") }
+                                            Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
+                                            Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
+                                        }
+                                    
+
+                                    Text(item.title)
+                                        .font(.footnote)
+                                        .foregroundStyle(Color(.label))
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.75)
+                                        .frame(width: 90)
+                                        .multilineTextAlignment(.center)
+                                }
                             }
                             .buttonStyle(.plain)
                         }
