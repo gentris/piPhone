@@ -18,6 +18,9 @@ struct AppsView: View {
     @State private var newTitle = ""
     @State private var newIcon = ""
     @State private var searchText = ""
+    @State private var appPendingDelete: AppItem? = nil
+    @State private var showDeleteAlert = false
+
 
     @State private var apps: [AppItem] = [
         .init(title: "UI change", icon: "photo"),
@@ -64,17 +67,30 @@ struct AppsView: View {
                     LazyVGrid(columns: columns, spacing: 12) {
                         ForEach(filteredApps) { item in
                             NavigationLink {
-                                ShortcutDetailView(item: item)
+                                AppDetailView(item: item)
                             } label: {
                                 VStack(spacing: 8) {
                                     AppCard(item: item)
                                         .contentShape(Rectangle())
                                         .contextMenu {
                                             Button { } label: { Label("Edit", systemImage: "pencil") }
-                                            Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
-                                            Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
+                                            
+                                            Button {
+                                                // duplicate
+                                                let copy = AppItem(title: item.title, icon: item.icon)
+                                                apps.append(copy)
+                                            } label: {
+                                                Label("Duplicate", systemImage: "doc.on.doc")
+                                            }
+                                            
+                                            Button(role: .destructive) {
+                                                appPendingDelete = item
+                                                showDeleteAlert = true
+                                            } label: {
+                                                Label("Delete", systemImage: "trash")
+                                            }
+
                                         }
-                                    
 
                                     Text(item.title)
                                         .font(.footnote)
@@ -103,6 +119,21 @@ struct AppsView: View {
                     Button { showAddSheet = true } label: { Image(systemName: "plus") }
                 }
             }
+            .alert("Delete app \"\(appPendingDelete?.title ?? "")\"?",
+                   isPresented: $showDeleteAlert) {
+                Button("Cancel", role: .cancel) {
+                    appPendingDelete = nil
+                }
+                Button("Delete", role: .destructive) {
+                    if let app = appPendingDelete {
+                        apps.removeAll { $0.id == app.id }
+                    }
+                    appPendingDelete = nil
+                }
+            } message: {
+                Text("This app will be removed.")
+            }
+
             .sheet(isPresented: $showAddSheet) {
                 AddAppSheet(title: $newTitle, icon: $newIcon, onAdd: { addNewApp() })
             }
@@ -166,7 +197,7 @@ struct AppIconCell: View {
 
 
 
-struct ShortcutDetailView: View {
+struct AppDetailView: View {
     let item: AppItem
 
     var body: some View {
