@@ -67,50 +67,45 @@ struct AppsView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 18) {
-                    ForEach(sections) { section in
-                        SectionHeader(title: section.title)
+            ZStack {
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
 
-                        LazyVGrid(columns: columns, spacing: 12) {
-                            ForEach(section.items) { item in
-                                NavigationLink {
-                                    ShortcutDetailView(item: item)
-                                } label: {
-                                    AppIconCell(item: item)
-                                        .contentShape(Rectangle())
-                                        .contextMenu {
-                                            Button { } label: { Label("Edit", systemImage: "pencil") }
-                                            Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
-                                            Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
-                                        }
+                ScrollView {
+                    VStack(spacing: 18) {
+                        ForEach(sections) { section in
+                            SectionHeader(title: section.title)
+
+                            LazyVGrid(columns: columns, spacing: 12) {
+                                ForEach(section.items) { item in
+                                    NavigationLink {
+                                        ShortcutDetailView(item: item)
+                                    } label: {
+                                        AppIconCell(item: item)
+                                            .contentShape(Rectangle())
+                                            .contextMenu {
+                                                Button { } label: { Label("Edit", systemImage: "pencil") }
+                                                Button { } label: { Label("Duplicate", systemImage: "doc.on.doc") }
+                                                Button(role: .destructive) { } label: { Label("Delete", systemImage: "trash") }
+                                            }
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
             }
             .navigationTitle("Apps")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 10) {
-                        Button {
-                            showAddSheet = true
-                        } label: {
-                            Image(systemName: "plus")
-                        }
-                    }
+                    Button { showAddSheet = true } label: { Image(systemName: "plus") }
                 }
             }
             .sheet(isPresented: $showAddSheet) {
-                AddAppSheet(
-                    title: $newTitle,
-                    icon: $newIcon,
-                    onAdd: { addNewApp() }
-                )
+                AddAppSheet(title: $newTitle, icon: $newIcon, onAdd: { addNewApp() })
             }
         }
     }
@@ -129,32 +124,28 @@ struct SectionHeader: View {
     }
 }
 
-struct ShortcutCard: View {
+struct AppCard: View {
     let item: ApptItem
 
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
+                .fill(Color(.secondarySystemGroupedBackground)) // ✅ gray tile in dark mode
                 .overlay(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color(.separator).opacity(0.5), lineWidth: 0)
+                        .stroke(Color(.separator).opacity(0.35), lineWidth: 1)
                 )
 
             Image(systemName: item.icon)
                 .font(.system(size: 30, weight: .semibold))
-                .foregroundStyle(Color(.label))
-            
+                .foregroundStyle(Color(.label)) // ✅ white in dark mode, black in light
         }
         .frame(width: 72, height: 72)
-        .shadow(
-            color: Color.black.opacity(0.06),
-            radius: 0,
-            x: 0,
-            y: 2
-        )
+        .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
     }
 }
+
+
 
 
 struct AppIconCell: View {
@@ -162,7 +153,7 @@ struct AppIconCell: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            ShortcutCard(item: item)
+            AppCard(item: item)
 
             Text(item.title)
                 .font(.footnote)
@@ -182,7 +173,7 @@ struct ShortcutDetailView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            ShortcutCard(item: item)
+            AppCard(item: item)
                 .padding()
 
             Text("Detail screen for: \(item.title)")
@@ -256,4 +247,8 @@ struct AddAppSheet: View {
             }
         }
     }
+}
+
+#Preview {
+    ContentView()
 }
