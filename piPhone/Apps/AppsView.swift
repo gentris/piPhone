@@ -22,7 +22,9 @@ struct AppSection: Identifiable {
 struct AppsView: View {
     @State private var showAddSheet = false
     @State private var newTitle = ""
-    @State private var newIcon = "app.fill"
+    @State private var newIcon = ""
+    @State private var searchText = ""
+
     
     private func addNewApp() {
         let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -37,7 +39,7 @@ struct AppsView: View {
 
         // reset form
         newTitle = ""
-        newIcon = "app.fill"
+        newIcon = ""
         showAddSheet = false
     }
     
@@ -74,7 +76,7 @@ struct AppsView: View {
 
                 ScrollView {
                     VStack(spacing: 18) {
-                        ForEach(sections) { section in
+                        ForEach(filteredSections) { section in
                             SectionHeader(title: section.title)
 
                             LazyVGrid(columns: columns, spacing: 12) {
@@ -100,6 +102,11 @@ struct AppsView: View {
                 }
             }
             .navigationTitle("Apps")
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search apps"
+            )
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showAddSheet = true } label: { Image(systemName: "plus") }
@@ -110,7 +117,25 @@ struct AppsView: View {
             }
         }
     }
+    
+    private var filteredSections: [AppSection] {
+        if searchText.isEmpty {
+            return sections
+        }
+
+        return sections.compactMap { section in
+            let filteredItems = section.items.filter {
+                $0.title.localizedCaseInsensitiveContains(searchText)
+            }
+
+            return filteredItems.isEmpty
+                ? nil
+                : AppSection(title: section.title, items: filteredItems)
+        }
+    }
+
 }
+
 
 struct SectionHeader: View {
     let title: String
@@ -249,6 +274,8 @@ struct AddAppSheet: View {
         }
     }
 }
+
+
 
 #Preview {
     ContentView()
