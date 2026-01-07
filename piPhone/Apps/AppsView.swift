@@ -7,34 +7,30 @@
 
 import SwiftUI
 
-struct ShortcutItem: Identifiable {
+struct ApptItem: Identifiable {
     var id = UUID()
     var title: String
     var icon: String
-    var colors: [Color]  // gradient colors
 }
 
-struct ShortcutSection: Identifiable {
+struct AppSection: Identifiable {
     var id = UUID()
     var title: String
-    var items: [ShortcutItem]
+    var items: [ApptItem]
 }
 
 struct AppsView: View {
     @State private var showAddSheet = false
     @State private var newTitle = ""
     @State private var newIcon = "app.fill"
-    @State private var newColor: Color = .black
-    
     
     private func addNewApp() {
         let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        let newItem = ShortcutItem(
+        let newItem = ApptItem(
             title: trimmed,
             icon: newIcon,
-            colors: [newColor.opacity(0.6)]
         )
 
         sections[0].items.append(newItem)
@@ -42,31 +38,30 @@ struct AppsView: View {
         // reset form
         newTitle = ""
         newIcon = "app.fill"
-        newColor = .black
         showAddSheet = false
     }
     
-    @State private var sections: [ShortcutSection] = [
+    @State private var sections: [AppSection] = [
         .init(title: "Build-in Apps", items: [
-            .init(title: "UI change", icon: "photo", colors: [.red]),
-            .init(title: "Take a Break", icon: "timer", colors: [.blue]),
-            .init(title: "Add new Task", icon: "map", colors: [.yellow]),
-            .init(title: "Add new Apple", icon: "phone", colors: [.mint]),
-            .init(title: "Add new Ticket", icon: "map", colors: [.yellow]),
-            .init(title: "Should add a new Ticket", icon: "headphones", colors:[.black]),
+            .init(title: "UI change", icon: "photo"),
+            .init(title: "Take a Break", icon: "timer"),
+            .init(title: "Add new Task", icon: "map"),
+            .init(title: "Add new Apple", icon: "phone"),
+            .init(title: "Add new Ticket", icon: "map"),
+            .init(title: "Should add a new Ticket", icon: "headphones"),
         ]),
         .init(title: "Custom Apps", items: [
-            .init(title: "Change Theme", icon: "envelope", colors: [.black]),
-            .init(title: "Phone details", icon: "phone", colors: [.black]),
-            .init(title: "Take that dollar", icon: "dollarsign", colors: [.black]),
-            .init(title: "CreditCard", icon: "creditcard", colors: [.black]),
+            .init(title: "Change Theme", icon: "envelope"),
+            .init(title: "Phone details", icon: "phone"),
+            .init(title: "Take that dollar", icon: "dollarsign"),
+            .init(title: "CreditCard", icon: "creditcard"),
         ])
     ]
 
     private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
     ]
 
 
@@ -114,7 +109,6 @@ struct AppsView: View {
                 AddAppSheet(
                     title: $newTitle,
                     icon: $newIcon,
-                    color: $newColor,
                     onAdd: { addNewApp() }
                 )
             }
@@ -136,7 +130,7 @@ struct SectionHeader: View {
 }
 
 struct ShortcutCard: View {
-    let item: ShortcutItem
+    let item: ApptItem
 
     var body: some View {
         ZStack {
@@ -164,7 +158,7 @@ struct ShortcutCard: View {
 
 
 struct AppIconCell: View {
-    let item: ShortcutItem
+    let item: ApptItem
 
     var body: some View {
         VStack(spacing: 8) {
@@ -172,10 +166,10 @@ struct AppIconCell: View {
 
             Text(item.title)
                 .font(.footnote)
-                .foregroundStyle(Color(.label)) // ✅ dynamic
+                .foregroundStyle(Color(.label))
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
-                .frame(width: 90)               // matches home screen feel
+                .frame(width: 90)
                 .multilineTextAlignment(.center)
         }
     }
@@ -184,7 +178,7 @@ struct AppIconCell: View {
 
 
 struct ShortcutDetailView: View {
-    let item: ShortcutItem
+    let item: ApptItem
 
     var body: some View {
         VStack(spacing: 16) {
@@ -204,8 +198,7 @@ struct ShortcutDetailView: View {
 struct AddAppSheet: View {
     @Binding var title: String
     @Binding var icon: String
-    @Binding var color: Color
-
+    
     let onAdd: () -> Void
 
     private let iconOptions: [String] = [
@@ -247,14 +240,6 @@ struct AddAppSheet: View {
                                     .font(.title3)
                                     .frame(maxWidth: .infinity, minHeight: 36)
                                     .padding(.vertical, 6)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                            .fill(name == icon ? color.opacity(0.25) : Color.clear)
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                            .stroke(name == icon ? color : Color.secondary.opacity(0.2), lineWidth: 1)
-                                    )
                             }
                             .buttonStyle(.plain)
                         }
@@ -272,7 +257,3 @@ struct AddAppSheet: View {
         }
     }
 }
-
-
-#Preview { ContentView() }
-
