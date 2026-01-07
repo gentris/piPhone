@@ -21,21 +21,10 @@
 import Foundation
 import CoreBluetooth
 
-protocol PiPhoneDelegate {
-    var peripheral: Peripheral? { get set }
-    func didUpdateBluetoothState(state: CBManagerState)
-    func didConnect()
-    func didDisconnect()
-    func didFailToConnect()
-    func didExecuteCommand(response: Data)
-    func didUpdateNotificationStateFor(characteristic: CBCharacteristic)
-}
-
-class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-    var piPhoneDelegate: PiPhoneDelegate?
+class BluetoothManager: NSObject {
+    var delegate: BluetoothManagerDelegate?
     
     private var centralManager:CBCentralManager?
-    private var pi:CBPeripheral?
     private var scanTimer:Timer?
     private var pauseTimer:Timer?
     
@@ -44,11 +33,13 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     private let commandCharacteristicUUID = CBUUID(string: "e6b8f004-b286-4826-b6ca-cba2eb628c03")
     private let peripheralName = "pi"
     
-    override init() {
+    init(delegate: BluetoothManagerDelegate?) {
+        self.delegate = delegate
         super.init()
+        
         centralManager = CBCentralManager(delegate: self, queue: nil)
     }
-
+    
     private func initScanTimer() -> Timer {
         return Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(startScanning), userInfo: nil, repeats: true)
     }
@@ -70,9 +61,11 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             scanTimer = initScanTimer()
         }
     }
-    
+}
+
+extension BluetoothManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        piPhoneDelegate?.didUpdateBluetoothState(state: central.state)
+        delegate?.didUpdateBluetoothState(state: central.state)
         
         if central.state != CBManagerState.poweredOn {
             print("Bluetooth is not ready for communication.")
@@ -81,7 +74,6 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         
         print("Bluetooth is ON and ready for communication.")
         
-        piPhoneDelegate?.didUpdateBluetoothState(state: central.state)
         startScanning()
     }
     
@@ -91,17 +83,13 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         }
         
         if name == peripheralName {
-            pi = peripheral
-            pi?.delegate = self
-            
-            if var delegate = piPhoneDelegate {
-                delegate.peripheral = Peripheral()
-                delegate.peripheral?.cbPeripheral = peripheral
-            }
+            peripheral.delegate = self
+            delegate?.peripheral = Peripheral(cbPeripheral: peripheral)
             
             scanTimer?.invalidate()
             pauseTimer?.invalidate()
 
+            central.stopScan()
             central.connect(peripheral, options: nil)
         }
     }
@@ -114,24 +102,26 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
             return
         }
         
-        piPhoneDelegate?.didFailToConnect()
+        delegate?.didFailToConnect()
         startScanning()
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Successfully connected to the peripheral.")
-        piPhoneDelegate?.didConnect()
+        delegate?.didConnect()
         peripheral.discoverServices([serviceUUID])
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Peripheral got disconnected.")
-        piPhoneDelegate?.didDisconnect()
+        delegate?.didDisconnect()
         startScanning()
     }
-    
+}
+
+extension BluetoothManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        if let error = error {
+        if let error {
             print("Error while discovering services: \(error.localizedDescription)")
             return;
         }
@@ -150,7 +140,7 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        if let error = error {
+        if let error {
             print("Error while discovering characteristics: \(error.localizedDescription)")
             return;
         }
@@ -164,20 +154,20 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
 
         for characteristic in characteristics {
             print("Characteristic with UUID: \(characteristic.uuid)")
-            pi?.setNotifyValue(true, for: characteristic)
+            peripheral.setNotifyValue(true, for: characteristic)
             
             if characteristic.uuid == screenCharacteristicUUID {
-                piPhoneDelegate?.peripheral?.screenCharacteristic = characteristic
+                delegate?.peripheral?.screenCharacteristic = characteristic
             } else if characteristic.uuid == commandCharacteristicUUID {
-                piPhoneDelegate?.peripheral?.commandCharacteristic = characteristic
+                delegate?.peripheral?.commandCharacteristic = characteristic
             }
         }
     }
         
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        piPhoneDelegate?.didUpdateNotificationStateFor(characteristic: characteristic)
+        delegate?.didUpdateNotificationStateFor(characteristic: characteristic)
         if !characteristic.isNotifying {
-            pi?.setNotifyValue(true, for: characteristic)
+            peripheral.setNotifyValue(true, for: characteristic)
         }
     }
         
@@ -188,7 +178,17 @@ class BluetoothManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate
         }
         
         if let value = characteristic.value {
-            piPhoneDelegate?.didExecuteCommand(response: value)
+            delegate?.didExecuteCommand(response: value)
         }
     }
+}
+
+protocol BluetoothManagerDelegate {
+    var peripheral: Peripheral? { get set }
+    func didUpdateBluetoothState(state: CBManagerState)
+    func didConnect()
+    func didDisconnect()
+    func didFailToConnect()
+    func didExecuteCommand(response: Data)
+    func didUpdateNotificationStateFor(characteristic: CBCharacteristic)
 }
