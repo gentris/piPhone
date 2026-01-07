@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ApptItem: Identifiable {
+struct AppItem: Identifiable {
     var id = UUID()
     var title: String
     var icon: String
@@ -16,7 +16,7 @@ struct ApptItem: Identifiable {
 struct AppSection: Identifiable {
     var id = UUID()
     var title: String
-    var items: [ApptItem]
+    var items: [AppItem]
 }
 
 struct AppsView: View {
@@ -30,14 +30,13 @@ struct AppsView: View {
         let trimmed = newTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        let newItem = ApptItem(
+        let newItem = AppItem(
             title: trimmed,
             icon: newIcon,
         )
 
         sections[0].items.append(newItem)
 
-        // reset form
         newTitle = ""
         newIcon = ""
         showAddSheet = false
@@ -151,12 +150,12 @@ struct SectionHeader: View {
 }
 
 struct AppCard: View {
-    let item: ApptItem
+    let item: AppItem
 
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground)) // ✅ gray tile in dark mode
+                .fill(Color(.secondarySystemGroupedBackground))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .stroke(Color(.separator).opacity(0.35), lineWidth: 1)
@@ -164,7 +163,7 @@ struct AppCard: View {
 
             Image(systemName: item.icon)
                 .font(.system(size: 30, weight: .semibold))
-                .foregroundStyle(Color(.label)) // ✅ white in dark mode, black in light
+                .foregroundStyle(Color(.label))
         }
         .frame(width: 72, height: 72)
         .shadow(color: Color.black.opacity(0.10), radius: 6, x: 0, y: 3)
@@ -175,7 +174,7 @@ struct AppCard: View {
 
 
 struct AppIconCell: View {
-    let item: ApptItem
+    let item: AppItem
 
     var body: some View {
         VStack(spacing: 8) {
@@ -195,7 +194,7 @@ struct AppIconCell: View {
 
 
 struct ShortcutDetailView: View {
-    let item: ApptItem
+    let item: AppItem
 
     var body: some View {
         VStack(spacing: 16) {
@@ -227,7 +226,6 @@ struct AddAppSheet: View {
         "cloud.fill", "wifi", "lock.fill", "key.fill", "person.fill", "person.2.fill"
     ]
 
-    // 5 columns icon grid
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 5)
 
     var body: some View {
@@ -238,7 +236,6 @@ struct AddAppSheet: View {
                 }
 
                 Section("Icon") {
-                    // shows currently selected icon
                     HStack(spacing: 12) {
                         Image(systemName: icon)
                             .font(.title2)
@@ -247,7 +244,6 @@ struct AddAppSheet: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    // grid picker
                     LazyVGrid(columns: columns, spacing: 10) {
                         ForEach(iconOptions, id: \.self) { name in
                             Button {
