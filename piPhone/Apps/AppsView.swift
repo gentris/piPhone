@@ -71,12 +71,11 @@ struct AppsView: View {
                             } label: {
                                 VStack(spacing: 8) {
                                     AppCard(item: item)
-                                        .contentShape(Rectangle())
+                                        .contentShape(.contextMenuPreview,
+                                                      RoundedRectangle(cornerRadius: 16, style: .continuous))
                                         .contextMenu {
                                             Button { } label: { Label("Edit", systemImage: "pencil") }
-                                            
                                             Button {
-                                                // duplicate
                                                 let copy = AppItem(title: item.title, icon: item.icon)
                                                 apps.append(copy)
                                             } label: {
@@ -138,20 +137,6 @@ struct AppsView: View {
                 AddAppSheet(title: $newTitle, icon: $newIcon, onAdd: { addNewApp() })
             }
         }
-    }
-}
-
-
-struct SectionHeader: View {
-    let title: String
-
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(.headline)
-            Spacer()
-        }
-        .padding(.top, 6)
     }
 }
 
