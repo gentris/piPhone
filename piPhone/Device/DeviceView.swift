@@ -40,7 +40,6 @@ struct DeviceRealityView: View {
 }
 
 struct DeviceSettingsView: View {
-
     private enum DeviceSettings: CaseIterable, Identifiable {
         case wifi, bluetooth, battery, storage, about
 

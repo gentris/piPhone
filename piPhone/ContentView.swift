@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var bluetoothManager: BluetoothManager
+
     var body: some View {
         TabView {
             DeviceView()

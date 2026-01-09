@@ -24,7 +24,7 @@
 
 import WebKit
 
-class KeyboardView: KBWebViewBase {
+class KeyboardInputWebView: KBWebViewBase {
     var keyboardAccessoryViewController: KeyboardAccessoryViewController = KeyboardAccessoryViewController()
     var controlKeyIsActive: Bool = false
     

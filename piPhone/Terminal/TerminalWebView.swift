@@ -24,7 +24,7 @@
 
 import WebKit
 
-class TermView: WKWebView {
+class TerminalWebView: WKWebView {
     var fontSize = 14
     var lastFontSize = 14
     var rows = 0
@@ -58,8 +58,8 @@ class TermView: WKWebView {
         script.add("term_set('background-color', '#000');");
         script.add("};")
         script.add("term_init();")
-    script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")
-    return WKUserScript(source: script.componentsJoined(by: "\n"), injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
+        script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")
+        return WKUserScript(source: script.componentsJoined(by: "\n"), injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
     }
     
     func write(_ data: String) {
