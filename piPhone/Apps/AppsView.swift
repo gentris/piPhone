@@ -345,25 +345,25 @@ struct AddAppSheet: View {
                     HStack(spacing: 12) {
                         Image(systemName: icon)
                             .font(.title2)
-                        Text(icon)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .scaleEffect(1.15)
+
                     }
 
-                    LazyVGrid(columns: columns, spacing: 10) {
-                        ForEach(iconOptions, id: \.self) { name in
-                            Button {
-                                icon = name
-                            } label: {
-                                Image(systemName: name)
-                                    .font(.title3)
-                                    .frame(maxWidth: .infinity, minHeight: 36)
-                                    .padding(.vertical, 6)
+                    ScrollView(.vertical, showsIndicators: true) {
+                        LazyVGrid(columns: columns, spacing: 10) {
+                            ForEach(iconOptions, id: \.self) { name in
+                                Button { icon = name } label: {
+                                    Image(systemName: name)
+                                        .font(.title3)
+                                        .frame(maxWidth: .infinity, minHeight: 36)
+                                        .padding(.vertical, 6)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
+                        .padding(.vertical, 6)
                     }
-                    .padding(.vertical, 6)
+                    .frame(maxHeight: 222)
                 }
             }
             .navigationTitle("New App")
