@@ -20,24 +20,47 @@
 
 import Foundation
 import CoreBluetooth
+import Combine
 
-class BluetoothManager: NSObject {
-    var delegate: BluetoothManagerDelegate?
+class BluetoothManager: NSObject, ObservableObject {
+    enum BluetoothState {
+        case on
+        case off
+        case unknown
+    }
     
-    private var centralManager:CBCentralManager?
-    private var scanTimer:Timer?
-    private var pauseTimer:Timer?
+    enum ConnectionState {
+        case connected
+        case disconnected
+        case failedToConnect
+    }
     
+    @Published var bluetoothState: BluetoothState = .unknown
+    @Published var connectionState: ConnectionState = .disconnected
+    @Published var peripheral: Peripheral?
+    @Published var receivedData: Data?
+    
+    private var centralManager: CBCentralManager?
+    private var scanTimer: Timer?
+    private var pauseTimer: Timer?
+    
+    private let peripheralName = "pi"
     private let serviceUUID = CBUUID(string: "50315dc8-bd51-4561-a9ec-eac52609b17a")
     private let screenCharacteristicUUID = CBUUID(string: "755ae080-461f-11ea-b77f-2e728ce88125")
     private let commandCharacteristicUUID = CBUUID(string: "e6b8f004-b286-4826-b6ca-cba2eb628c03")
-    private let peripheralName = "pi"
     
-    init(delegate: BluetoothManagerDelegate?) {
-        self.delegate = delegate
+    override init() {
         super.init()
-        
         centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    // Public API for views to call
+    func writeCommand(_ data: String) {
+        peripheral?.write(data: data, characteristic: peripheral?.commandCharacteristic)
+    }
+    
+    func writeScreen(_ data: String) {
+        peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
     }
     
     private func initScanTimer() -> Timer {
@@ -65,26 +88,31 @@ class BluetoothManager: NSObject {
 
 extension BluetoothManager: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        delegate?.didUpdateBluetoothState(state: central.state)
-        
-        if central.state != CBManagerState.poweredOn {
-            print("Bluetooth is not ready for communication.")
-            return
+        switch central.state {
+            case .poweredOn:
+                bluetoothState = .on
+            case .poweredOff:
+                bluetoothState = .off
+            default:
+                bluetoothState = .unknown
         }
         
-        print("Bluetooth is ON and ready for communication.")
-        
-        startScanning()
+        if bluetoothState == .on {
+            print("Bluetooth is ON and ready for communication.")
+            startScanning()
+        } else {
+            print("Bluetooth is not ready for communication.")
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         guard let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String else {
-            return;
+            return
         }
         
         if name == peripheralName {
             peripheral.delegate = self
-            delegate?.peripheral = Peripheral(cbPeripheral: peripheral)
+            self.peripheral = Peripheral(cbPeripheral: peripheral)
             
             scanTimer?.invalidate()
             pauseTimer?.invalidate()
@@ -96,25 +124,25 @@ extension BluetoothManager: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         print("Couldn't connect to the peripheral.")
+        connectionState = .failedToConnect
         
         if central.state != CBManagerState.poweredOn {
             print("Bluetooth is not ready for communication.")
             return
         }
         
-        delegate?.didFailToConnect()
         startScanning()
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("Successfully connected to the peripheral.")
-        delegate?.didConnect()
+        connectionState = .connected
         peripheral.discoverServices([serviceUUID])
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Peripheral got disconnected.")
-        delegate?.didDisconnect()
+        connectionState = .disconnected
         startScanning()
     }
 }
@@ -123,7 +151,7 @@ extension BluetoothManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error {
             print("Error while discovering services: \(error.localizedDescription)")
-            return;
+            return
         }
         
         guard let services = peripheral.services else {
@@ -142,7 +170,7 @@ extension BluetoothManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let error {
             print("Error while discovering characteristics: \(error.localizedDescription)")
-            return;
+            return
         }
         
         guard let characteristics = service.characteristics else {
@@ -157,15 +185,15 @@ extension BluetoothManager: CBPeripheralDelegate {
             peripheral.setNotifyValue(true, for: characteristic)
             
             if characteristic.uuid == screenCharacteristicUUID {
-                delegate?.peripheral?.screenCharacteristic = characteristic
+                self.peripheral?.screenCharacteristic = characteristic
             } else if characteristic.uuid == commandCharacteristicUUID {
-                delegate?.peripheral?.commandCharacteristic = characteristic
+                self.peripheral?.commandCharacteristic = characteristic
             }
         }
     }
         
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        delegate?.didUpdateNotificationStateFor(characteristic: characteristic)
+        // Currently making sure that all characteristics are set to notify
         if !characteristic.isNotifying {
             peripheral.setNotifyValue(true, for: characteristic)
         }
@@ -178,17 +206,7 @@ extension BluetoothManager: CBPeripheralDelegate {
         }
         
         if let value = characteristic.value {
-            delegate?.didExecuteCommand(response: value)
+            receivedData = value
         }
     }
-}
-
-protocol BluetoothManagerDelegate {
-    var peripheral: Peripheral? { get set }
-    func didUpdateBluetoothState(state: CBManagerState)
-    func didConnect()
-    func didDisconnect()
-    func didFailToConnect()
-    func didExecuteCommand(response: Data)
-    func didUpdateNotificationStateFor(characteristic: CBCharacteristic)
 }

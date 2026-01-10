@@ -23,71 +23,142 @@
 //
 
 import UIKit
-import CoreBluetooth
+import Combine
 
-class TerminalViewController: UIViewController, WKScriptMessageHandler, PiPhoneDelegate, SpecialKeysDelegate {
+class TerminalViewController: UIViewController {
     var peripheral: Peripheral?
-    private var keyboardRect: CGRect?
-    private var termView: TermView!
-    private var keyboardView: KeyboardView!
-    private var coverView: UIView!
-    private let termViewScriptName = "interOp"
-    private let keyboardViewScriptName = "_kb"
-    private var bluetoothManager: BluetoothManager!
+    
+    private let terminalWebViewScriptName = "interOp"
+    private let keyboardInputWebViewScriptName = "_kb"
+    
+    private var terminalWebView: TerminalWebView!
+    private var keyboardInputWebView: KeyboardInputWebView!
+    
+    private var bluetoothManager: BluetoothManager
+    private var cancellables = Set<AnyCancellable>()
+    
+    init(bluetoothManager: BluetoothManager) {
+        self.bluetoothManager = bluetoothManager
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.loadSubViews()
-        self.addKeyboardObservers()
-    }
-        
-    @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            self.keyboardRect = keyboardRect
-            self.termView.frame = self.getTermViewFrame()
-            self.view.setNeedsLayout()
-        }
-    }
-    
-    @objc func keyboardWillHide(notification: NSNotification) {
-        self.keyboardRect = nil
-        self.termView.frame = self.getTermViewFrame()
-        self.view.setNeedsLayout()
-    }
-    
-    private func addKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        self.subscribeToKeyboardEvents()
+        self.subscribeToBluetoothEvents()
     }
     
     private func loadSubViews() {
         let configuration = WKWebViewConfiguration()
-        configuration.userContentController.add(self, name: termViewScriptName)
-        configuration.userContentController.add(self, name: keyboardViewScriptName)
+        configuration.userContentController.add(self, name: terminalWebViewScriptName)
+        configuration.userContentController.add(self, name: keyboardInputWebViewScriptName)
         
-        self.termView = TermView(frame: self.getTermViewFrame(), configuration: configuration)
-        // make the webview inspectable in safari
-//        if #available(iOS 16.4, *) {
-//            self.termView.isInspectable = true
-//        }
-        self.keyboardView = KeyboardView(frame: .zero, configuration: configuration, specialKeysDelegate: self)
-        self.coverView = UIView(frame: UIScreen.main.bounds)
+        self.keyboardInputWebView = KeyboardInputWebView(frame: .zero, configuration: configuration, specialKeysDelegate: self)
         
-        self.coverView.backgroundColor = .black
+        self.terminalWebView = TerminalWebView(frame: self.getTerminalWebViewFrame(), configuration: configuration)
+        self.terminalWebView.addInteraction(TermGesturesInteraction(jsScrollerPath: "t.scrollPort_.scroller_", keyboardInputWebView: self.keyboardInputWebView))
+        self.terminalWebView.isOpaque = false
+        self.terminalWebView.backgroundColor = .black
+        self.terminalWebView.scrollView.isOpaque = false
+        self.terminalWebView.scrollView.backgroundColor = .black
         
-        let interaction = TermGesturesInteraction(jsScrollerPath: "t.scrollPort_.scroller_", keyboardView: self.keyboardView)
-        self.termView.addInteraction(interaction)
-        
-        self.view.addSubview(termView)
-        self.view.addSubview(keyboardView)
-        self.view.addSubview(coverView)
+        self.view.addSubview(terminalWebView)
+        self.view.addSubview(keyboardInputWebView)
     }
     
-    // Delegate functions
+    private func subscribeToKeyboardEvents() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
+    private func subscribeToBluetoothEvents() {
+        bluetoothManager.$bluetoothState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                
+                var stateString = ""
+                if (state == .off) {
+                    stateString = "OFF"
+                } else if (state == .on) {
+                    stateString = "ON"
+                } else {
+                    stateString = "N/A"
+                }
+                
+                let data = "[piPhone] Bluetooth state: \(stateString).\r\n"
+                self.terminalWebView.write(data)
+            }
+            .store(in: &cancellables)
+        
+        bluetoothManager.$connectionState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                
+                if state == .connected {
+                    self.terminalWebView.write("[piPhone] Connected to peripheral.\r\n")
+                } else if state == .disconnected {
+                    self.terminalWebView.write("[piPhone] Disconnected from peripheral.\r\n")
+                } else if state == .failedToConnect {
+                    self.terminalWebView.write("[piPhone] Failed to connect to peripheral.\r\n")
+                }
+            }
+            .store(in: &cancellables)
+        
+        bluetoothManager.$receivedData
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bytes in
+                guard let self else { return }
+                
+                if let data:String = String(data: bytes, encoding: String.Encoding.utf8) {
+                    self.terminalWebView.write(data)
+                }
+            }
+            .store(in: &cancellables)
+        
+        bluetoothManager.$peripheral
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] peripheral in
+                guard let self else { return }
+                
+                self.peripheral = peripheral
+            }
+            .store(in: &cancellables)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            self.terminalWebView.frame = self.getTerminalWebViewFrame(keyboardFrame: keyboardFrame)
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        self.terminalWebView.frame = self.getTerminalWebViewFrame(keyboardFrame: nil)
+    }
+    
+    func getTerminalWebViewFrame(keyboardFrame: CGRect? = nil) -> CGRect {
+        var terminalWebViewInsets = view.window?.safeAreaInsets ?? .zero
+        
+        if let keyboardHeight = keyboardFrame?.height {
+            terminalWebViewInsets.bottom = max(terminalWebViewInsets.bottom, keyboardHeight)
+        }
+        return UIScreen.main.bounds.inset(by: terminalWebViewInsets)
+    }
+    
+}
+
+extension TerminalViewController: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         print("Message.Name: ", message.name)
-        if message.name == self.termViewScriptName {
+        if message.name == self.terminalWebViewScriptName {
             let payload: NSDictionary = message.body as! NSDictionary
             let operation:String = payload["op"] as! String
             let data = payload["data"] as! NSDictionary
@@ -98,13 +169,13 @@ class TerminalViewController: UIViewController, WKScriptMessageHandler, PiPhoneD
             } else if operation == "fontSizeChanged" {
                 
             } else if operation == "sigwinch" {
-                self.termView.cols = data["cols"] as! Int
-                self.termView.rows = data["rows"] as! Int
+                self.terminalWebView.cols = data["cols"] as! Int
+                self.terminalWebView.rows = data["rows"] as! Int
                 
-                let data = "{\"cols\": \(self.termView.cols), \"rows\": \(self.termView.rows)}"
+                let data = "{\"cols\": \(self.terminalWebView.cols), \"rows\": \(self.terminalWebView.rows)}"
                 self.peripheral?.write(data: data, characteristic: self.peripheral?.screenCharacteristic)
             }
-        } else if message.name == self.keyboardViewScriptName {
+        } else if message.name == self.keyboardInputWebViewScriptName {
             let body: NSDictionary = message.body as! NSDictionary
             guard let op: String = body["op"] as? String else {
                 return
@@ -114,85 +185,28 @@ class TerminalViewController: UIViewController, WKScriptMessageHandler, PiPhoneD
                 let data: String = body["data"] as! String
                 self.peripheral?.write(data: data, characteristic: self.peripheral?.commandCharacteristic);
                 
-                if self.keyboardView.controlKeyIsActive {
-                    self.keyboardView.reportControlKeyReleased()
+                if self.keyboardInputWebView.controlKeyIsActive {
+                    self.keyboardInputWebView.reportControlKeyReleased()
                 }
             }
         }
     }
     
-    func didUpdateBluetoothState(state: CBManagerState) {
-        var stateString = ""
+    private func terminalReady(_ data: NSDictionary) {
+        self.keyboardInputWebView.readyForInput = true
+        self.keyboardInputWebView.becomeFirstResponder()
         
-        if (state == .poweredOff) {
-            stateString = "OFF"
-        } else if (state == .poweredOn) {
-            stateString = "ON"
-        } else {
-            stateString = "N/A"
-        }
-            
-        let data = "[piPhone] Bluetooth state: \(stateString).\r\n"
-        self.termView.write(data)
+        self.terminalWebView.cols = data["cols"] as! Int
+        self.terminalWebView.rows = data["rows"] as! Int
     }
+}
 
-    func didConnect() {
-        let data = "[piPhone] Connected to peripheral.\r\n"
-        self.termView.write(data)
-    }
-    
-    func didDisconnect() {
-        let data = "[piPhone] Disconnected from peripheral.\r\n"
-        self.termView.write(data)
-    }
-    
-    func didFailToConnect() {
-        let data = "[piPhone] Failed to connect to peripheral.\r\n"
-        self.termView.write(data)
-    }
-
-    func didExecuteCommand(response: Data) {
-        if let data:String = String(data: response, encoding: String.Encoding.utf8) {
-            self.termView.write(data)
-        }
-    }
-    
-    func didUpdateNotificationStateFor(characteristic: CBCharacteristic) {
-        if characteristic == self.peripheral?.screenCharacteristic {
-            let data = "{\"cols\": \(self.termView.cols), \"rows\": \(self.termView.rows)}"
-            self.peripheral?.write(data: data, characteristic: peripheral?.screenCharacteristic)
-        }
-    }
-    
+extension TerminalViewController: SpecialKeysDelegate {
     func didClickSpecialKey(key: Key) {
         self.peripheral?.write(data: key.ansi, characteristic: self.peripheral?.commandCharacteristic)
     }
     
     func didClickControlKey(key: Key) {
-        self.keyboardView.reportControlKeyPressed()
-    }
-    
-    func terminalReady(_ data: NSDictionary) {
-        UIView.transition(from: self.coverView, to: self.termView, duration: 0.3, options: .transitionCrossDissolve) { finished in
-            self.coverView.removeFromSuperview()
-            self.keyboardView.readyForInput = true
-            self.keyboardView.becomeFirstResponder()
-            
-            self.termView.cols = data["cols"] as! Int
-            self.termView.rows = data["rows"] as! Int
-            
-            self.bluetoothManager = BluetoothManager()
-            self.bluetoothManager.piPhoneDelegate = self
-        }
-    }
-    
-    func getTermViewFrame() -> CGRect {
-        var inset = view.window?.safeAreaInsets ?? .zero
-        
-        if let height = self.keyboardRect?.height {
-            inset.bottom = max(inset.bottom, height)
-        }
-        
-        return UIScreen.main.bounds.inset(by: inset)
+        self.keyboardInputWebView.reportControlKeyPressed()
     }
 }
