@@ -25,49 +25,53 @@
 import WebKit
 
 class KeyboardInputWebView: KBWebViewBase {
-    var keyboardAccessoryViewController: KeyboardAccessoryViewController = KeyboardAccessoryViewController()
+    var keyboardAccessoryViewController: KeyboardAccessoryViewController =
+        KeyboardAccessoryViewController()
     var controlKeyIsActive: Bool = false
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    init(frame: CGRect, configuration: WKWebViewConfiguration, specialKeysDelegate: SpecialKeysDelegate) {
+
+    init(
+        frame: CGRect, configuration: WKWebViewConfiguration,
+        specialKeysDelegate: SpecialKeysDelegate
+    ) {
         super.init(frame: frame, configuration: configuration)
         self.keyboardAccessoryViewController.keysDelegate = specialKeysDelegate
     }
-    
+
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         self.load()
     }
-    
+
     override var inputAccessoryViewController: UIInputViewController? {
         return self.keyboardAccessoryViewController
     }
-    
+
     override var inputAccessoryView: UIView? {
         return nil
     }
-    
+
     private func load() {
         let url = Bundle.main.url(forResource: "kb", withExtension: "html")!
         loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     }
-    
+
     func reportControlKeyPressed() {
         self.controlKeyIsActive = !self.controlKeyIsActive
-        
+
         var payload: String
         if self.controlKeyIsActive {
             payload = "_onKB(\"toolbar-mods\", 262144);"
         } else {
             payload = "_onKB(\"toolbar-mods\", 0);"
         }
-        
+
         self.evaluateJavaScript(payload, completionHandler: nil)
     }
-    
+
     func reportControlKeyReleased() {
         self.controlKeyIsActive = false
         let payload = "_onKB(\"toolbar-mods\", 0);"

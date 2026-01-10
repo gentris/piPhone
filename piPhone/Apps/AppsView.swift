@@ -21,7 +21,6 @@ struct AppsView: View {
     @State private var appPendingDelete: AppItem? = nil
     @State private var showDeleteAlert = false
 
-
     @State private var apps: [AppItem] = [
         .init(title: "UI change", icon: "photo"),
         .init(title: "Take a Break", icon: "timer"),
@@ -73,16 +72,20 @@ struct AppsView: View {
                                     AppCard(item: item)
                                         .contentShape(Rectangle())
                                         .contextMenu {
-                                            Button { } label: { Label("Edit", systemImage: "pencil") }
-                                            
+                                            Button {
+                                            } label: {
+                                                Label("Edit", systemImage: "pencil")
+                                            }
+
                                             Button {
                                                 // duplicate
-                                                let copy = AppItem(title: item.title, icon: item.icon)
+                                                let copy = AppItem(
+                                                    title: item.title, icon: item.icon)
                                                 apps.append(copy)
                                             } label: {
                                                 Label("Duplicate", systemImage: "doc.on.doc")
                                             }
-                                            
+
                                             Button(role: .destructive) {
                                                 appPendingDelete = item
                                                 showDeleteAlert = true
@@ -116,11 +119,17 @@ struct AppsView: View {
             )
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showAddSheet = true } label: { Image(systemName: "plus") }
+                    Button {
+                        showAddSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
-            .alert("Delete app \"\(appPendingDelete?.title ?? "")\"?",
-                   isPresented: $showDeleteAlert) {
+            .alert(
+                "Delete app \"\(appPendingDelete?.title ?? "")\"?",
+                isPresented: $showDeleteAlert
+            ) {
                 Button("Cancel", role: .cancel) {
                     appPendingDelete = nil
                 }
@@ -140,7 +149,6 @@ struct AppsView: View {
         }
     }
 }
-
 
 struct SectionHeader: View {
     let title: String
@@ -176,7 +184,6 @@ struct AppCard: View {
     }
 }
 
-
 struct AppIconCell: View {
     let item: AppItem
 
@@ -194,8 +201,6 @@ struct AppIconCell: View {
         }
     }
 }
-
-
 
 struct AppDetailView: View {
     let item: AppItem
@@ -218,7 +223,7 @@ struct AppDetailView: View {
 struct AddAppSheet: View {
     @Binding var title: String
     @Binding var icon: String
-    
+
     let onAdd: () -> Void
 
     private let iconOptions: [String] = [
@@ -227,7 +232,7 @@ struct AddAppSheet: View {
         "camera.fill", "photo.fill", "music.note", "headphones", "gamecontroller.fill",
         "message.fill", "phone.fill", "envelope.fill", "map.fill", "location.fill",
         "cart.fill", "creditcard.fill", "dollarsign.circle.fill", "chart.bar.fill",
-        "cloud.fill", "wifi", "lock.fill", "key.fill", "person.fill", "person.2.fill"
+        "cloud.fill", "wifi", "lock.fill", "key.fill", "person.fill", "person.2.fill",
     ]
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 5)
@@ -274,8 +279,6 @@ struct AddAppSheet: View {
         }
     }
 }
-
-
 
 #Preview {
     ContentView()

@@ -5,15 +5,15 @@
 //  Created by Gentris Leci on 1/6/26.
 //
 
-import SwiftUI
 import RealityKit
+import SwiftUI
 
 struct DeviceView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 12) {
                 DeviceRealityView()
-                
+
                 DeviceSettingsView()
             }
             .padding()
@@ -59,7 +59,7 @@ struct DeviceSettingsView: View {
             switch self {
             case .battery: return "battery.25"
             case .wifi: return "wifi"
-            case .bluetooth: return "bluetooth.materialdesign" // your custom asset name
+            case .bluetooth: return "bluetooth.materialdesign"  // your custom asset name
             case .storage: return "externaldrive"
             case .about: return "info.circle"
             }
@@ -138,4 +138,3 @@ private struct PlaceholderDestination: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
