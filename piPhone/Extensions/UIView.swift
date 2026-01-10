@@ -26,28 +26,29 @@
 import UIKit
 
 extension UIView {
-  func dropSuperViewTouches() {
-    if let superview = superview,
-      let window = window,
-      superview != window {
-      if let recognizers = gestureRecognizers {
-        for r in recognizers {
-          r.dropTouches()
+    func dropSuperViewTouches() {
+        if let superview = superview,
+            let window = window,
+            superview != window
+        {
+            if let recognizers = gestureRecognizers {
+                for r in recognizers {
+                    r.dropTouches()
+                }
+            }
+            superview.dropSuperViewTouches()
         }
-      }
-      superview.dropSuperViewTouches()
     }
-  }
-  
-  func dropTouches() {
-    if let recognizers = gestureRecognizers {
-      for r in recognizers {
-        r.dropTouches()
-      }
+
+    func dropTouches() {
+        if let recognizers = gestureRecognizers {
+            for r in recognizers {
+                r.dropTouches()
+            }
+        }
+
+        for view in subviews {
+            view.dropTouches()
+        }
     }
-    
-    for view in subviews {
-      view.dropTouches()
-    }
-  }
 }

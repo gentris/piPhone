@@ -30,79 +30,82 @@ class TerminalWebView: WKWebView {
     var rows = 0
     var cols = 0
     var ready = false
-    
+
     override var canResignFirstResponder: Bool { return false }
     override func becomeFirstResponder() -> Bool { return false }
-    
+
     override init(frame: CGRect, configuration: WKWebViewConfiguration) {
         super.init(frame: frame, configuration: configuration)
         self.load()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func load() {
         self.configuration.userContentController.addUserScript(initScript())
-        
+
         let url = Bundle.main.url(forResource: "term", withExtension: "html")!
         self.loadFileURL(url, allowingReadAccessTo: url)
     }
-    
+
     func initScript() -> WKUserScript {
         let script = NSMutableArray()
         script.add("function applyUserSettings() {")
         script.add("term_set('cursor-blink', true);")
         script.add("term_setFontSize(\(self.fontSize));")
-        script.add("term_set('background-color', '#000');");
+        script.add("term_set('background-color', '#000');")
         script.add("};")
         script.add("term_init();")
-        script.add("term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");")
-        return WKUserScript(source: script.componentsJoined(by: "\n"), injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
+        script.add(
+            "term_write(\"\\u001b]1337;BlinkPrompt=eyJzZWN1cmUiOmZhbHNlLCJzaGVsbCI6dHJ1ZSwicHJvbXB0IjoiYmxpbms+ICJ9\\u0007\");"
+        )
+        return WKUserScript(
+            source: script.componentsJoined(by: "\n"),
+            injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
     }
-    
+
     func write(_ data: String) {
         var jsonData: Data?
-        
+
         do {
             try jsonData = JSONSerialization.data(withJSONObject: data, options: .fragmentsAllowed)
         } catch {
             return
         }
-        
+
         var result = Data(capacity: (jsonData?.count ?? 0) + 11 + 2)
         result.append("term_write(", count: 11)
         if let jsonData = jsonData {
             result.append(jsonData)
         }
         result.append(");", count: 2)
-        
+
         let output: String = String(data: result, encoding: .utf8)!
         self.evaluateJavaScript(output, completionHandler: nil)
     }
-    
+
     func updateFontSize(_ size: Int) {
         self.lastFontSize = size
         self.evaluateJavaScript("term_setFontSize('\(size)');", completionHandler: nil)
     }
-    
+
     public func scaleWithPinch(_ pinch: UIPinchGestureRecognizer) {
         var fontSize: Int = self.fontSize
-        
+
         switch pinch.state {
-        case .began: fallthrough
-        case .changed:
+        case .began, .changed:
             fontSize = Int(round(CGFloat(self.fontSize)) * pinch.scale)
-            
+
             if fontSize == 0 {
                 fontSize = 1
             }
-            
+
             guard fontSize != self.fontSize else {
                 return
             }
-            
+
             self.updateFontSize(fontSize)
         case .ended:
             self.fontSize = self.lastFontSize

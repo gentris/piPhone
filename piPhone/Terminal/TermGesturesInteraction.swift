@@ -32,13 +32,13 @@ class TermGesturesInteraction: NSObject, UIInteraction {
     private let scrollView = UIScrollViewWithoutHitTest()
     private let oneTapRecognizer = UITapGestureRecognizer()
     private let pinchRecognizer = UIPinchGestureRecognizer()
-    private var recognizers:[UIGestureRecognizer] {
+    private var recognizers: [UIGestureRecognizer] {
         return [scrollView.panGestureRecognizer, oneTapRecognizer, pinchRecognizer]
     }
-    private let jsScollerPath:String
+    private let jsScollerPath: String
     var focused: Bool = true
     var view: UIView?
-    
+
     init(jsScrollerPath: String, keyboardInputWebView: KeyboardInputWebView) {
         self.jsScollerPath = jsScrollerPath
         super.init()
@@ -50,114 +50,120 @@ class TermGesturesInteraction: NSObject, UIInteraction {
         scrollView.keyboardDismissMode = .interactive
         scrollView.delaysContentTouches = false
         scrollView.delegate = self
-        
+
         oneTapRecognizer.numberOfTapsRequired = 1
         oneTapRecognizer.numberOfTouchesRequired = 1
         oneTapRecognizer.delegate = self
         oneTapRecognizer.addTarget(self, action: #selector(self.handleOneTap(_:)))
-        
+
         pinchRecognizer.delegate = self
         pinchRecognizer.addTarget(self, action: #selector(self.handlePinch(_:)))
     }
-    
+
     func willMove(to view: UIView?) {
         if let terminalWebView = view as? TerminalWebView {
-            terminalWebView.scrollView.delaysContentTouches = false;
-            terminalWebView.scrollView.canCancelContentTouches = false;
-            terminalWebView.scrollView.isScrollEnabled = false;
-            terminalWebView.scrollView.panGestureRecognizer.isEnabled = false;
-          
-          
+            terminalWebView.scrollView.delaysContentTouches = false
+            terminalWebView.scrollView.canCancelContentTouches = false
+            terminalWebView.scrollView.isScrollEnabled = false
+            terminalWebView.scrollView.panGestureRecognizer.isEnabled = false
+
             scrollView.frame = terminalWebView.bounds
             terminalWebView.addSubview(scrollView)
             terminalWebView.configuration.userContentController.add(self, name: "wkScroller")
-            
+
             for recognizer in recognizers {
                 terminalWebView.addGestureRecognizer(recognizer)
             }
-            
+
             self.terminalWebView = terminalWebView
         } else {
             scrollView.removeFromSuperview()
-            terminalWebView?.configuration.userContentController.removeScriptMessageHandler(forName: "wkScroller")
-          
+            terminalWebView?.configuration.userContentController.removeScriptMessageHandler(
+                forName: "wkScroller")
+
             for recognizer in recognizers {
                 terminalWebView?.addGestureRecognizer(recognizer)
             }
-          
+
             terminalWebView = nil
         }
     }
-    
+
     func didMove(to view: UIView?) {
         self.view = view
     }
-    
+
     @objc func handleOneTap(_ recognizer: UITapGestureRecognizer) {
         switch recognizer.state {
-            case .recognized:
-                keyboardInputWebView?.becomeFirstResponder()
-            default: break
+        case .recognized:
+            keyboardInputWebView?.becomeFirstResponder()
+        default: break
         }
     }
-    
-    @objc func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
-      if  recognizer.state == .possible {
-        return
-      }
-      
-      let dScale = 1.0 - recognizer.scale;
-      if abs(dScale) > 0.06 {
 
-        recognizer.view?.superview?.dropSuperViewTouches()
-        scrollView.panGestureRecognizer.dropTouches()
-        
-          terminalWebView?.scaleWithPinch(recognizer)
-      }
+    @objc func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
+        if recognizer.state == .possible {
+            return
+        }
+
+        let dScale = 1.0 - recognizer.scale
+        if abs(dScale) > 0.06 {
+
+            recognizer.view?.superview?.dropSuperViewTouches()
+            scrollView.panGestureRecognizer.dropTouches()
+
+            terminalWebView?.scaleWithPinch(recognizer)
+        }
     }
 }
 
 extension TermGesturesInteraction: UIGestureRecognizerDelegate {
-  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-    return true
-  }
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        return true
+    }
 }
 
 extension TermGesturesInteraction: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset
-        terminalWebView?.evaluateJavaScript("\(jsScollerPath).reportScroll(\(offset.x), \(offset.y));", completionHandler: nil)
+        terminalWebView?.evaluateJavaScript(
+            "\(jsScollerPath).reportScroll(\(offset.x), \(offset.y));", completionHandler: nil)
     }
 }
 
 extension TermGesturesInteraction: WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-      guard
-        let msg = message.body as? [String: Any],
-        let op = msg["op"] as? String
-      else {
-        return
-      }
-      
-      switch op {
-      case "resize":
-        let contentSize = NSCoder.cgSize(for: msg["contentSize"] as? String ?? "")
-        scrollView.contentSize = contentSize
-        let offset = CGPoint(x: 0, y: max(contentSize.height - scrollView.bounds.height, 0));
-        scrollView.contentOffset = offset
-        
-      case "scrollTo":
-        let animated = msg["animated"] as? Bool == true
-        let x: CGFloat = msg["x"] as? CGFloat ?? 0
-        let y: CGFloat = msg["y"] as? CGFloat ?? 0
-        let offset = CGPoint(x: x, y: y)
-        if (offset == scrollView.contentOffset) {
-          return
+    func userContentController(
+        _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
+    ) {
+        guard
+            let msg = message.body as? [String: Any],
+            let op = msg["op"] as? String
+        else {
+            return
         }
-        // TODO: debounce?
-        scrollView.setContentOffset(offset, animated: animated)
-      default: break
-      }
+
+        switch op {
+        case "resize":
+            let contentSize = NSCoder.cgSize(for: msg["contentSize"] as? String ?? "")
+            scrollView.contentSize = contentSize
+            let offset = CGPoint(x: 0, y: max(contentSize.height - scrollView.bounds.height, 0))
+            scrollView.contentOffset = offset
+
+        case "scrollTo":
+            let animated = msg["animated"] as? Bool == true
+            let x: CGFloat = msg["x"] as? CGFloat ?? 0
+            let y: CGFloat = msg["y"] as? CGFloat ?? 0
+            let offset = CGPoint(x: x, y: y)
+            if offset == scrollView.contentOffset {
+                return
+            }
+            // TODO: debounce?
+            scrollView.setContentOffset(offset, animated: animated)
+        default: break
+        }
     }
 }
 
@@ -165,7 +171,8 @@ class UIScrollViewWithoutHitTest: UIScrollView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let scrollBarWidth: CGFloat = 24
         if let result = super.hitTest(point, with: event),
-            result !== self || point.x > self.bounds.size.width - scrollBarWidth {
+            result !== self || point.x > self.bounds.size.width - scrollBarWidth
+        {
             return result
         }
         return nil

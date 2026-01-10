@@ -26,10 +26,10 @@
 import UIKit
 
 extension UIGestureRecognizer {
-  func dropTouches() {
-    if isEnabled {
-      isEnabled = false
-      isEnabled = true
+    func dropTouches() {
+        if isEnabled {
+            isEnabled = false
+            isEnabled = true
+        }
     }
-  }
 }
