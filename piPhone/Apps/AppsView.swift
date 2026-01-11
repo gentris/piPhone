@@ -566,7 +566,7 @@ struct AddFileSheet: View {
 
                 Section("Code") {
                     RunestoneEditorView(text: $code, language: detectedLanguage)
-                        .frame(minHeight: 220)
+                        .frame(minHeight: 550)
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             }
