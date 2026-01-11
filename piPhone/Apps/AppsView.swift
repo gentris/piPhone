@@ -6,6 +6,14 @@
 //
 
 import SwiftUI
+import CodeEditor
+import UIKit
+import Runestone
+import Foundation
+
+import TreeSitterJavaScriptRunestone
+import TreeSitterPythonRunestone
+import TreeSitterJavaRunestone
 
 struct AppItem: Identifiable {
     var id = UUID()
@@ -13,23 +21,131 @@ struct AppItem: Identifiable {
     var icon: String
 }
 
-import Foundation
+enum CodeLanguage: Equatable {
+    case plainText
+    case javaScript
+    case python
+    case java
+
+    static func fromFilename(_ name: String) -> CodeLanguage {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let ext = (trimmed as NSString).pathExtension.lowercased()
+
+        switch ext {
+        case "js", "jsx", "mjs", "cjs":
+            return .javaScript
+        case "py":
+            return .python
+        case "java":
+            return .java
+        default:
+            return .plainText
+        }
+    }
+}
 
 struct FileOption: Identifiable, Equatable {
     let id: String
     var name: String
     var url: String
     var code: String
+    var language: CodeLanguage
 
-    init(id: String = UUID().uuidString, name: String, url: String, code: String = "") {
+    init(
+        id: String = UUID().uuidString,
+        name: String,
+        url: String,
+        code: String = "",
+        language: CodeLanguage = .plainText
+    ) {
         self.id = id
         self.name = name
         self.url = url
         self.code = code
+        self.language = language
     }
 }
 
+struct RunestoneEditorView: UIViewRepresentable {
+    @Binding var text: String
+    var language: CodeLanguage
 
+    func makeUIView(context: Context) -> TextView {
+        let tv = TextView()
+        tv.editorDelegate = context.coordinator
+
+        tv.theme = RunestoneTheme()
+        tv.backgroundColor = UIColor.clear
+
+        tv.textContainerInset = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
+        tv.showLineNumbers = true
+        tv.lineHeightMultiplier = 1.2
+        tv.kern = 0.3
+
+        tv.characterPairs = defaultPairs
+        tv.indentStrategy = .space(length: 4)
+        tv.autocorrectionType = .no
+        tv.autocapitalizationType = .none
+        tv.smartQuotesType = .no
+        tv.smartDashesType = .no
+        tv.smartInsertDeleteType = .no
+        tv.spellCheckingType = .no
+
+        tv.text = text
+        applyLanguage(to: tv, language: language)
+        
+        return tv
+    }
+
+    func updateUIView(_ tv: TextView, context: Context) {
+        if tv.text != text {
+            tv.text = text
+        }
+
+        if context.coordinator.lastLanguage != language {
+            context.coordinator.lastLanguage = language
+            applyLanguage(to: tv, language: language)
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(text: $text, lastLanguage: language)
+    }
+
+    final class Coordinator: NSObject, TextViewDelegate {
+        var text: Binding<String>
+        var lastLanguage: CodeLanguage
+        var lastText: String
+
+        init(text: Binding<String>, lastLanguage: CodeLanguage) {
+            self.text = text
+            self.lastLanguage = lastLanguage
+            self.lastText = text.wrappedValue
+        }
+
+        func textViewDidChange(_ textView: TextView) {
+            let newText = textView.text
+            lastText = newText
+            text.wrappedValue = newText
+        }
+    }
+
+    private func applyLanguage(to tv: TextView, language: CodeLanguage) {
+        switch language {
+        case .plainText:
+            tv.setLanguageMode(PlainTextLanguageMode())
+
+        case .javaScript:
+            tv.setLanguageMode(TreeSitterLanguageMode(language: .javaScript))
+
+        case .python:
+            tv.setLanguageMode(TreeSitterLanguageMode(language: .python))
+
+        case .java:
+            tv.setLanguageMode(TreeSitterLanguageMode(language: .java))
+        }
+    }
+}
 
 struct AppsView: View {
     @State private var showAddSheet = false
@@ -39,8 +155,6 @@ struct AppsView: View {
     @State private var searchText = ""
     @State private var appPendingDelete: AppItem? = nil
     @State private var showDeleteAlert = false
-    
-
 
     @State private var apps: [AppItem] = [
         .init(title: "UI change", icon: "photo"),
@@ -187,7 +301,6 @@ struct AppCard: View {
     }
 }
 
-
 struct AppIconCell: View {
     let item: AppItem
 
@@ -205,8 +318,6 @@ struct AppIconCell: View {
         }
     }
 }
-
-
 
 struct AppDetailView: View {
     let item: AppItem
@@ -255,8 +366,6 @@ struct FilePickerScreen: View {
             ForEach(options) { opt in
                 Button {
                     selectedFileId = (selectedFileId == opt.id) ? "none" : opt.id
-                    // optional: dismiss when selecting
-                    // dismiss()
                 } label: {
                     HStack {
                         Text(opt.name)
@@ -288,7 +397,7 @@ struct FilePickerScreen: View {
         .sheet(isPresented: $showAddFileSheet) {
             AddFileSheet { newFile in
                 options.append(newFile)
-                selectedFileId = newFile.id // auto-select the new file
+                selectedFileId = newFile.id
             }
         }
     }
@@ -302,19 +411,12 @@ struct AddAppSheet: View {
     let onAdd: () -> Void
 
     @State private var fileOptions: [FileOption] = [
-        FileOption(id: "f1", name: "projects.pdf", url: "files://projects"),
-        FileOption(id: "f2", name: "text.pdf", url: "files://invoices"),
-        FileOption(id: "f3", name: "books.pdf", url: "https://drive.google.com/specs"),
-        FileOption(id: "f4", name: "car.pdf", url: "https://notion.so/tasks")
+        FileOption(id: "f1", name: "projects.pdf", url: "files://projects")
     ]
 
     private let iconOptions: [String] = [
         "app.fill", "sparkles", "star.fill", "bolt.fill", "flame.fill",
-        "timer", "bell.fill", "heart.fill", "bookmark.fill", "paperplane.fill",
-        "camera.fill", "photo.fill", "music.note", "headphones", "gamecontroller.fill",
-        "message.fill", "phone.fill", "envelope.fill", "map.fill", "location.fill",
-        "cart.fill", "creditcard.fill", "dollarsign.circle.fill", "chart.bar.fill",
-        "cloud.fill", "wifi", "lock.fill", "key.fill", "person.fill", "person.2.fill"
+        "timer", "bell.fill"
     ]
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 5)
@@ -348,7 +450,6 @@ struct AddAppSheet: View {
                             .scaleEffect(1.15)
 
                     }
-
                     ScrollView(.vertical, showsIndicators: true) {
                         LazyVGrid(columns: columns, spacing: 10) {
                             ForEach(iconOptions, id: \.self) { name in
@@ -366,6 +467,7 @@ struct AddAppSheet: View {
                     .frame(maxHeight: 222)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New App")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -385,21 +487,26 @@ struct AddFileSheet: View {
 
     let onSave: (FileOption) -> Void
 
+    private var detectedLanguage: CodeLanguage {
+        CodeLanguage.fromFilename(name)
+    }
+
     var body: some View {
         NavigationStack {
             Form {
                 Section("File Info") {
-                    TextField("File name (e.g. notes.txt)", text: $name)
+                    TextField("File name (e.g. notes.py)", text: $name)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                 }
 
                 Section("Code") {
-                    TextEditor(text: $code)
+                    RunestoneEditorView(text: $code, language: detectedLanguage)
                         .frame(minHeight: 220)
-                        .font(.system(.body, design: .monospaced))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Add File")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -412,7 +519,6 @@ struct AddFileSheet: View {
                         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
                         guard !trimmed.isEmpty else { return }
 
-                        // url can be whatever you want; this is a simple placeholder
                         let newFile = FileOption(
                             name: trimmed,
                             url: "files://\(trimmed)",
@@ -428,6 +534,18 @@ struct AddFileSheet: View {
     }
 }
 
+struct SimplePair: CharacterPair {
+    let leading: String
+    let trailing: String
+}
+
+private let defaultPairs: [CharacterPair] = [
+    SimplePair(leading: "{", trailing: "}"),
+    SimplePair(leading: "(", trailing: ")"),
+    SimplePair(leading: "[", trailing: "]"),
+    SimplePair(leading: "\"", trailing: "\""),
+    SimplePair(leading: "'", trailing: "'")
+]
 
 #Preview {
     ContentView()
