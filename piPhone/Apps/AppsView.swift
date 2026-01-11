@@ -414,10 +414,53 @@ struct AddAppSheet: View {
         FileOption(id: "f1", name: "projects.pdf", url: "files://projects")
     ]
 
-    private let iconOptions: [String] = [
-        "app.fill", "sparkles", "star.fill", "bolt.fill", "flame.fill",
-        "timer", "bell.fill"
+    private let iconCategories: [(title: String, symbols: [String])] = [
+        (
+            "Communication",
+            [
+                "mic.fill", "message.fill", "phone.fill",
+                "video.fill", "envelope.fill"
+            ]
+        ),
+        (
+            "Weather",
+            [
+                "sun.max.fill", "moon.fill",
+                "cloud.fill", "cloud.rain.fill"
+            ]
+        ),
+        (
+            "Objects & Tools",
+            [
+                "folder.fill", "paperclip",
+                "link", "book.fill",
+                "trash.fill", "gearshape.fill",
+                "eraser.fill", "graduationcap.fill",
+                "ruler.fill", "backpack.fill"
+            ]
+        ),
+        (
+            "Devices",
+            [
+                "keyboard.fill", "printer.fill",
+                "desktopcomputer", "macpro.gen2", "pc",
+                "airtag.fill", "macpro.gen3.fill", "display",
+                "iphone.gen2"
+            ]
+        ),
+        (
+            "Nature",
+            [
+                "globe.europe.africa", "sun.min.fill",
+                "cloud.sun.fill", "sun.max.fill",
+                "sunrise.fill","moon.fill",
+                "sparkles", "moon.stars",
+                "cloud.fill", "cloud.heavyrain.fill",
+                "wind", "snowflake", "leaf", "bolt"
+            ]
+        )
     ]
+
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 5)
 
@@ -428,10 +471,6 @@ struct AddAppSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("App Info") {
-                    TextField("App name", text: $title)
-                }
-
                 Section("File") {
                     NavigationLink {
                         FilePickerScreen(
@@ -442,29 +481,54 @@ struct AddAppSheet: View {
                         FileRow(title: "File", value: selectedFileName)
                     }
                 }
+                
+                Section("App Info") {
+                    TextField("App name", text: $title)
+                }
 
                 Section("Icon") {
+
+                    // Selected icon preview
                     HStack(spacing: 12) {
                         Image(systemName: icon)
                             .font(.title2)
-                            .scaleEffect(1.15)
-
+                            .scaleEffect(1.3)
                     }
+
                     ScrollView(.vertical, showsIndicators: true) {
-                        LazyVGrid(columns: columns, spacing: 10) {
-                            ForEach(iconOptions, id: \.self) { name in
-                                Button { icon = name } label: {
-                                    Image(systemName: name)
-                                        .font(.title3)
-                                        .frame(maxWidth: .infinity, minHeight: 36)
-                                        .padding(.vertical, 6)
+                        VStack(alignment: .leading, spacing: 16) {
+
+                            ForEach(iconCategories, id: \.title) { category in
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(category.title)
+                                        .font(.footnote.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+
+                                    LazyVGrid(columns: columns, spacing: 10) {
+                                        ForEach(category.symbols, id: \.self) { name in
+                                            Button {
+                                                icon = name
+                                            } label: {
+                                                Image(systemName: name)
+                                                    .font(.title)
+                                                    .frame(maxWidth: .infinity, minHeight: 36)
+                                                    .padding(.vertical, 6)
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .fill(name == icon
+                                                                  ? Color.primary.opacity(0.15)
+                                                                  : Color.clear)
+                                                    )
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.vertical, 6)
                     }
-                    .frame(maxHeight: 222)
+                    .frame(maxHeight: .infinity)
                 }
             }
             .scrollDismissesKeyboard(.interactively)
