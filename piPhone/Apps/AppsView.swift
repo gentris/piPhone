@@ -216,7 +216,7 @@ struct AppsView: View {
                                             } label: {
                                                 Label("Duplicate", systemImage: "doc.on.doc")
                                             }
-                                            
+
                                             Button(role: .destructive) {
                                                 appPendingDelete = item
                                                 showDeleteAlert = true
@@ -250,11 +250,17 @@ struct AppsView: View {
             )
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showAddSheet = true } label: { Image(systemName: "plus") }
+                    Button {
+                        showAddSheet = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
-            .alert("Delete app \"\(appPendingDelete?.title ?? "")\"?",
-                   isPresented: $showDeleteAlert) {
+            .alert(
+                "Delete app \"\(appPendingDelete?.title ?? "")\"?",
+                isPresented: $showDeleteAlert
+            ) {
                 Button("Cancel", role: .cancel) {
                     appPendingDelete = nil
                 }

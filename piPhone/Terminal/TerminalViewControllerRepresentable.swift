@@ -9,8 +9,10 @@ import SwiftUI
 import UIKit
 
 struct TerminalViewControllerRepresentable: UIViewControllerRepresentable {
+    let bluetoothManager: BluetoothManager
+
     func makeUIViewController(context: Context) -> TerminalViewController {
-        TerminalViewController()
+        TerminalViewController(bluetoothManager: bluetoothManager)
     }
 
     func updateUIViewController(_ uiViewController: TerminalViewController, context: Context) {

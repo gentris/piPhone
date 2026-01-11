@@ -25,11 +25,11 @@ struct Key: Hashable {
 }
 
 let keys: [KeyName: Key] = [
-    .esc:   Key(name: .esc,   title: "esc", ansi: "\u{1B}"),
-    .tab:   Key(name: .tab,   title: "tab", ansi: "\t"),
-    .ctrl:  Key(name: .ctrl,  title: "ctrl", ansi: "CTRL"),
-    .up:    Key(name: .up,    title: "▲",   ansi: "\u{1B}[A"),
-    .down:  Key(name: .down,  title: "▼",   ansi: "\u{1B}[B"),
-    .right: Key(name: .right, title: "▶",   ansi: "\u{1B}[C"),
-    .left:  Key(name: .left,  title: "◀",   ansi: "\u{1B}[D"),
+    .esc: Key(name: .esc, title: "esc", ansi: "\u{1B}"),
+    .tab: Key(name: .tab, title: "tab", ansi: "\t"),
+    .ctrl: Key(name: .ctrl, title: "ctrl", ansi: "CTRL"),
+    .up: Key(name: .up, title: "▲", ansi: "\u{1B}[A"),
+    .down: Key(name: .down, title: "▼", ansi: "\u{1B}[B"),
+    .right: Key(name: .right, title: "▶", ansi: "\u{1B}[C"),
+    .left: Key(name: .left, title: "◀", ansi: "\u{1B}[D"),
 ]

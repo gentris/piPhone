@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct TerminalView: View {
+    @EnvironmentObject var bluetoothManager: BluetoothManager
+
     var body: some View {
-        TerminalViewControllerRepresentable()
-                    .ignoresSafeArea()
+        TerminalViewControllerRepresentable(bluetoothManager: bluetoothManager).ignoresSafeArea()
     }
 }

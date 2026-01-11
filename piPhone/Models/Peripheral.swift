@@ -18,22 +18,24 @@
 // along with piPhone.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-import Foundation
 import CoreBluetooth
+import Foundation
 
 class Peripheral {
-    var cbPeripheral: CBPeripheral?
+    var cbPeripheral: CBPeripheral
     var service: CBService?
     var screenCharacteristic: CBCharacteristic?
     var commandCharacteristic: CBCharacteristic?
-    
+
+    init(cbPeripheral: CBPeripheral) {
+        self.cbPeripheral = cbPeripheral
+    }
+
     func write(data input: String, characteristic: CBCharacteristic?) {
         let data = input.data(using: String.Encoding.utf8)!
-        
+
         if let characteristic = characteristic {
-            if let peripheral = cbPeripheral {
-                peripheral.writeValue(data, for: characteristic, type: .withResponse)
-            }
+            cbPeripheral.writeValue(data, for: characteristic, type: .withResponse)
         }
     }
 }

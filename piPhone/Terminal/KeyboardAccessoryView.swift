@@ -18,7 +18,7 @@ struct KeyboardAccessoryView: View {
                 keycap(keys[.right]!)
             }
             .padding(.horizontal, 4)
-            .frame(width: geo.size.width - 20, height: 44) // <-- 10 padding on each side
+            .frame(width: geo.size.width - 20, height: 44)  // <-- 10 padding on each side
             .background {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(.thickMaterial)
