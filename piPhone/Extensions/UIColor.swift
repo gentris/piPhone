@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIColor {
-    struct CustomTheme {
+    struct RunestoneColors {
         var background: UIColor { .systemBackground }
 
         var selection: UIColor {
@@ -54,6 +54,6 @@ extension UIColor {
         fileprivate init() {}
     }
 
-    static let tomorrow = CustomTheme()
+    static let runestone = RunestoneColors()
 }
 

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CodeEditor
 import UIKit
 import Runestone
 import Foundation
@@ -115,18 +114,10 @@ struct RunestoneEditorView: UIViewRepresentable {
     final class Coordinator: NSObject, TextViewDelegate {
         var text: Binding<String>
         var lastLanguage: CodeLanguage
-        var lastText: String
 
         init(text: Binding<String>, lastLanguage: CodeLanguage) {
             self.text = text
             self.lastLanguage = lastLanguage
-            self.lastText = text.wrappedValue
-        }
-
-        func textViewDidChange(_ textView: TextView) {
-            let newText = textView.text
-            lastText = newText
-            text.wrappedValue = newText
         }
     }
 
