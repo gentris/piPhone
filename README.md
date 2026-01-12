@@ -1,0 +1,4 @@
+## Format code
+```
+make format
+```
