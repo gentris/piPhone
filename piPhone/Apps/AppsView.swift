@@ -5,14 +5,13 @@
 //  Created by Gentris Leci on 1/6/26.
 //
 
-import SwiftUI
-import UIKit
-import Runestone
 import Foundation
-
+import Runestone
+import SwiftUI
+import TreeSitterJavaRunestone
 import TreeSitterJavaScriptRunestone
 import TreeSitterPythonRunestone
-import TreeSitterJavaRunestone
+import UIKit
 
 struct AppItem: Identifiable {
     var id = UUID()
@@ -92,7 +91,7 @@ struct RunestoneEditorView: UIViewRepresentable {
 
         tv.text = text
         applyLanguage(to: tv, language: language)
-        
+
         return tv
     }
 
@@ -197,12 +196,18 @@ struct AppsView: View {
                             } label: {
                                 VStack(spacing: 8) {
                                     AppCard(item: item)
-                                        .contentShape(.contextMenuPreview,
-                                                      RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                        .contentShape(
+                                            .contextMenuPreview,
+                                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        )
                                         .contextMenu {
-                                            Button { } label: { Label("Edit", systemImage: "pencil") }
                                             Button {
-                                                let copy = AppItem(title: item.title, icon: item.icon)
+                                            } label: {
+                                                Label("Edit", systemImage: "pencil")
+                                            }
+                                            Button {
+                                                let copy = AppItem(
+                                                    title: item.title, icon: item.icon)
                                                 apps.append(copy)
                                             } label: {
                                                 Label("Duplicate", systemImage: "doc.on.doc")
@@ -416,14 +421,14 @@ struct AddAppSheet: View {
             "Communication",
             [
                 "mic.fill", "message.fill", "phone.fill",
-                "video.fill", "envelope.fill"
+                "video.fill", "envelope.fill",
             ]
         ),
         (
             "Weather",
             [
                 "sun.max.fill", "moon.fill",
-                "cloud.fill", "cloud.rain.fill"
+                "cloud.fill", "cloud.rain.fill",
             ]
         ),
         (
@@ -433,7 +438,7 @@ struct AddAppSheet: View {
                 "link", "book.fill",
                 "trash.fill", "gearshape.fill",
                 "eraser.fill", "graduationcap.fill",
-                "ruler.fill", "backpack.fill"
+                "ruler.fill", "backpack.fill",
             ]
         ),
         (
@@ -442,7 +447,7 @@ struct AddAppSheet: View {
                 "keyboard.fill", "printer.fill",
                 "desktopcomputer", "macpro.gen2", "pc",
                 "airtag.fill", "macpro.gen3.fill", "display",
-                "iphone.gen2"
+                "iphone.gen2",
             ]
         ),
         (
@@ -450,14 +455,13 @@ struct AddAppSheet: View {
             [
                 "globe.europe.africa", "sun.min.fill",
                 "cloud.sun.fill", "sun.max.fill",
-                "sunrise.fill","moon.fill",
+                "sunrise.fill", "moon.fill",
                 "sparkles", "moon.stars",
                 "cloud.fill", "cloud.heavyrain.fill",
-                "wind", "snowflake", "leaf", "bolt"
+                "wind", "snowflake", "leaf", "bolt",
             ]
-        )
+        ),
     ]
-
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 5)
 
@@ -478,7 +482,7 @@ struct AddAppSheet: View {
                         FileRow(title: "File", value: selectedFileName)
                     }
                 }
-                
+
                 Section("App Info") {
                     TextField("App name", text: $title)
                 }
@@ -512,9 +516,10 @@ struct AddAppSheet: View {
                                                     .padding(.vertical, 6)
                                                     .background(
                                                         RoundedRectangle(cornerRadius: 10)
-                                                            .fill(name == icon
-                                                                  ? Color.primary.opacity(0.15)
-                                                                  : Color.clear)
+                                                            .fill(
+                                                                name == icon
+                                                                    ? Color.primary.opacity(0.15)
+                                                                    : Color.clear)
                                                     )
                                             }
                                             .buttonStyle(.plain)
@@ -605,7 +610,7 @@ private let defaultPairs: [CharacterPair] = [
     SimplePair(leading: "(", trailing: ")"),
     SimplePair(leading: "[", trailing: "]"),
     SimplePair(leading: "\"", trailing: "\""),
-    SimplePair(leading: "'", trailing: "'")
+    SimplePair(leading: "'", trailing: "'"),
 ]
 
 #Preview {

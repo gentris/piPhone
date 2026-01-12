@@ -18,7 +18,7 @@ extension UIColor {
         var currentLine: UIColor {
             UIColor(red: 242 / 255, green: 242 / 255, blue: 242 / 255, alpha: 1)
         }
-        
+
         var foreground: UIColor { .label }
 
         var comment: UIColor { .secondaryLabel }
@@ -56,4 +56,3 @@ extension UIColor {
 
     static let runestone = RunestoneColors()
 }
-
