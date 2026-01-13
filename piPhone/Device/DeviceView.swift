@@ -24,18 +24,19 @@ struct DeviceView: View {
 
 struct DeviceRealityView: View {
     var body: some View {
-        RealityView { content in
-            if let model = try? await ModelEntity(named: "piPhone-20260104-final") {
-                model.transform.scale *= 20.0
-                model.generateCollisionShapes(recursive: true)
-
-                content.add(model)
-            }
-            Task {
-                // Asynchronously perform any additional work to configure
-                // the content after the system renders the view.
-            }
-        }
+        //        RealityView { content in
+        //            if let model = try? await ModelEntity(named: "piPhone-20260104-final") {
+        //                model.transform.scale *= 20.0
+        //                model.generateCollisionShapes(recursive: true)
+        //
+        //                content.add(model)
+        //            }
+        //            Task {
+        //                // Asynchronously perform any additional work to configure
+        //                // the content after the system renders the view.
+        //            }
+        //        }
+        EmptyView()
     }
 }
 
